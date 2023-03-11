@@ -36,7 +36,7 @@ class BaseTestCases:
         def setUp(self) -> None:
             self.user = UserFactory.create()
 
-        def test_post_new_ingredient_logged_in(self):
+        def test_post_logged_in(self):
             self.client.login(
                 username=UserFactory.username, password=UserFactory.password
             )
@@ -44,7 +44,7 @@ class BaseTestCases:
             response = self.client.post(url, data=self.default_post_data, format="json")
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        def test_post_new_ingredient_anonymous(self):
+        def test_post_anonymous(self):
             url = reverse(f"{self.endpoint}-list")
             response = self.client.post(url, data=self.default_post_data, format="json")
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -100,7 +100,7 @@ class BaseTestCases:
         def setUp(self) -> None:
             self.user = UserFactory.create()
 
-        def test_delete_ingredient_logged_in(self):
+        def test_delete_logged_in(self):
             self.client.login(
                 username=UserFactory.username, password=UserFactory.password
             )
@@ -108,7 +108,7 @@ class BaseTestCases:
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        def test_delete_ingredient_anonymous(self):
+        def test_delete_anonymous(self):
             url = reverse(f"{self.endpoint}-detail", args=[1])
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
