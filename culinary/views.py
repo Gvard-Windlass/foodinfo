@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import IngredientSerializer, MeasureSerializer
@@ -10,10 +11,11 @@ class IngredientViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
+        filters = []
         name = self.request.query_params.get("name")
         if name:
-            return Ingredient.objects.filter(name__contains=name)
-        return Ingredient.objects.all()
+            filters.append(Q(name__contains=name))
+        return Ingredient.objects.filter(*filters).order_by("name")
 
 
 class MeasureViewSet(viewsets.ModelViewSet):
@@ -22,7 +24,8 @@ class MeasureViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
+        filters = []
         name = self.request.query_params.get("name")
         if name:
-            return Measure.objects.filter(name__contains=name)
-        return Measure.objects.all()
+            filters.append(Q(name__contains=name))
+        return Measure.objects.filter(*filters).order_by("name")
