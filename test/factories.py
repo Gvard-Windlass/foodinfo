@@ -11,9 +11,9 @@ class UserFactory(factory.django.DjangoModelFactory):
         model = User
         django_get_or_create = ("username",)
 
-    username = "gvard"
-    password = "Bk7^31&3LDXt"
-    email = "test@example.com"
+    username = factory.Sequence(lambda n: "user %d" % n)
+    password = factory.Sequence(lambda n: "Bk7^31&3LDXt%d" % n)
+    email = factory.Sequence(lambda n: "test%d@example.com" % n)
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
