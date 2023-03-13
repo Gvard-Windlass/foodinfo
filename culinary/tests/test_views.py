@@ -7,11 +7,24 @@ from test.base_test import BaseTestCases, TestUsers
 
 class TestIngredientViews(
     BaseTestCases.BaseCUDViewTests,
+    BaseTestCases.BaseGetByUserTestsMixin,
+    BaseTestCases.BaseEditByUserTestsMixin,
     APITestCase,
 ):
     fixtures = ["users.json", "culinary.json"]
 
     def setUp(self):
+        self.list_path_name = "ingredients-list"
+        self.single_path_name = "ingredients-detail"
+
+        self.objects_by_staff = 21
+        self.objects_by_user1 = 5
+        self.objects_by_user2 = 5
+
+        self.staff_object_id = 1
+        self.user1_object_id = 26
+        self.user2_object_id = 31
+
         self.post_path_name = "ingredients-list"
         self.default_post_data = {"name": "carrot"}
 
@@ -20,105 +33,12 @@ class TestIngredientViews(
 
         self.delete_path_name = "ingredients-edit"
 
-    def test_get_list_anonymous(self):
-        url = reverse(f"ingredients-list")
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.json()), 21)
-
-    def test_get_list_staff_access(self):
-        credentials = TestUsers.get_staff_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        url = reverse(f"ingredients-list")
-        staff_response = self.client.get(url)
-
-        self.assertEqual(staff_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(staff_response.json()), 31)
-
-    def test_get_list_user_access(self):
-        url = reverse(f"ingredients-list")
-
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        user1_response = self.client.get(url)
-        self.assertEqual(user1_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(user1_response.json()), 26)
-
-        credentials = TestUsers.get_user2_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        user2_response = self.client.get(url)
-        self.assertEqual(user2_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(user2_response.json()), 26)
-
-        with self.assertRaises(AssertionError):
-            self.assertCountEqual(user1_response.json(), user2_response.json())
-
     def test_filter_by_name(self):
         IngredientFactory.create(name="different name")
         url = reverse("ingredients-list")
         response = self.client.get(url + "?name=different")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
-
-    def test_get_specific_anonymous(self):
-        url = reverse(f"ingredients-detail", args=[1])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["id"], 1)
-
-        url = reverse(f"ingredients-detail", args=[26])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_get_specific_staff_acess(self):
-        credentials = TestUsers.get_staff_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        url = reverse(f"ingredients-detail", args=[26])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["id"], 26)
-
-    def test_get_specific_user_acess(self):
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        url = reverse(f"ingredients-detail", args=[26])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["id"], 26)
-
-    def test_update_by_user_access(self):
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        url = reverse(self.put_path_name, args=[31])
-        response = self.client.put(url, data=self.default_put_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-        credentials = TestUsers.get_user2_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        response = self.client.put(url, data=self.default_put_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_delete_by_user_access(self):
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        url = reverse(self.delete_path_name, args=[31])
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-        credentials = TestUsers.get_user2_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class TestMeasureViews(BaseTestCases.BaseCRUDViewTests):

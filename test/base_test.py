@@ -45,6 +45,92 @@ class BaseTestCases:
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    class BaseGetListByUserTestsMixin(APITestCase):
+        list_path_name: str
+        objects_by_staff: int
+        objects_by_user1: int
+        objects_by_user2: int
+
+        def test_get_list_anonymous(self):
+            url = reverse(self.list_path_name)
+            response = self.client.get(url)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(len(response.json()), self.objects_by_staff)
+
+        def test_get_list_staff_access(self):
+            credentials = TestUsers.get_staff_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.list_path_name)
+            staff_response = self.client.get(url)
+
+            self.assertEqual(staff_response.status_code, status.HTTP_200_OK)
+            total = sum(
+                [self.objects_by_staff, self.objects_by_user1, self.objects_by_user2]
+            )
+            self.assertEqual(len(staff_response.json()), total)
+
+        def test_get_list_user_access(self):
+            url = reverse(self.list_path_name)
+
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            user1_response = self.client.get(url)
+            self.assertEqual(user1_response.status_code, status.HTTP_200_OK)
+            user1_total = sum([self.objects_by_staff, self.objects_by_user1])
+            self.assertEqual(len(user1_response.json()), user1_total)
+
+            credentials = TestUsers.get_user2_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            user2_response = self.client.get(url)
+            self.assertEqual(user2_response.status_code, status.HTTP_200_OK)
+            user2_total = sum([self.objects_by_staff, self.objects_by_user2])
+            self.assertEqual(len(user2_response.json()), user2_total)
+
+            with self.assertRaises(AssertionError):
+                self.assertCountEqual(user1_response.json(), user2_response.json())
+
+    class BaseGetObjectByUserTestsMixin(APITestCase):
+        single_path_name: str
+        staff_object_id: int
+        user1_object_id: int
+
+        def test_get_specific_anonymous(self):
+            url = reverse(self.single_path_name, args=[self.staff_object_id])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.json()["id"], self.staff_object_id)
+
+            url = reverse(self.single_path_name, args=[self.user1_object_id])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        def test_get_specific_staff_acess(self):
+            credentials = TestUsers.get_staff_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.single_path_name, args=[self.user1_object_id])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.json()["id"], self.user1_object_id)
+
+        def test_get_specific_user_acess(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.single_path_name, args=[self.user1_object_id])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.json()["id"], self.user1_object_id)
+
+    class BaseGetByUserTestsMixin(
+        BaseGetListByUserTestsMixin, BaseGetObjectByUserTestsMixin
+    ):
+        pass
+
     class BasePostTestsMixin(APITestCase):
         default_post_data: Dict
         post_path_name: str
@@ -133,6 +219,40 @@ class BaseTestCases:
             url = reverse(self.delete_path_name, args=[100])
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    class BaseEditByUserTestsMixin(APITestCase):
+        user2_object_id: int
+        put_path_name: str
+        delete_path_name: str
+        default_put_data: Dict
+
+        def test_update_by_user_access(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.put_path_name, args=[self.user2_object_id])
+            response = self.client.put(url, data=self.default_put_data, format="json")
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+            credentials = TestUsers.get_user2_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            response = self.client.put(url, data=self.default_put_data, format="json")
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        def test_delete_by_user_access(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.delete_path_name, args=[self.user2_object_id])
+            response = self.client.delete(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+            credentials = TestUsers.get_user2_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            response = self.client.delete(url)
+            self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     class BaseCRUDViewTests(
         BaseGetTestsMixin, BasePostTestsMixin, BasePutTestsMixin, BaseDeleteTestsMixin
