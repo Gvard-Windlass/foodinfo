@@ -7,7 +7,16 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ["id", "name", "user"]
+        fields = [
+            "id",
+            "name",
+            "user",
+            "category",
+            "calories",
+            "proteins",
+            "fats",
+            "carbs",
+        ]
 
 
 class MeasureSerializer(serializers.ModelSerializer):
