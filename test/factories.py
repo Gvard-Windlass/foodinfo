@@ -27,6 +27,7 @@ class IngredientFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ("name",)
 
     name = factory.Sequence(lambda n: "test ingredient %d" % n)
+    user_id = 1
 
 
 class MeasureFactory(factory.django.DjangoModelFactory):

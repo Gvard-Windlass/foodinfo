@@ -3,9 +3,11 @@ from rest_framework import serializers
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source="user.id")
+
     class Meta:
         model = Ingredient
-        fields = ["id", "name"]
+        fields = ["id", "name", "user"]
 
 
 class MeasureSerializer(serializers.ModelSerializer):
