@@ -41,7 +41,9 @@ class TestIngredientViews(
         self.assertEqual(len(response.json()), 1)
 
 
-class TestMeasureViews(BaseTestCases.BaseCRUDViewTests):
+class TestMeasureViews(
+    BaseTestCases.BaseCRUDViewTests, BaseTestCases.BaseCUDForbiddenForUsersTestsMixin
+):
     fixtures = ["users.json", "culinary.json"]
 
     def setUp(self):

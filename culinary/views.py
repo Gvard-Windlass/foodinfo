@@ -2,7 +2,7 @@ from django.db.models import Q
 from rest_framework import viewsets, permissions, mixins, generics
 from .serializers import IngredientSerializer, MeasureSerializer
 from .models import Ingredient, Measure
-from .permissions import HasAccessOrReadOnly, HasAccess
+from .permissions import HasAccessOrReadOnly, HasAccess, IsStaffOrReadOnly
 
 
 class IngredientEdit(
@@ -61,7 +61,7 @@ class IngredientList(
 class MeasureViewSet(viewsets.ModelViewSet):
     queryset = Measure.objects.all().order_by("name")
     serializer_class = MeasureSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsStaffOrReadOnly]
 
     def get_queryset(self):
         filters = []
