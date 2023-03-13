@@ -49,7 +49,7 @@ class BaseTestCases:
         default_post_data: Dict
         post_path_name: str
 
-        def test_post_logged_in(self):
+        def test_post_by_staff(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -75,7 +75,7 @@ class BaseTestCases:
         default_put_data: Dict
         put_path_name: str
 
-        def test_update_logged_in(self):
+        def test_update_by_staff(self):
             id = 1
             response_data = self.default_put_data.copy()
             response_data["id"] = id
@@ -113,7 +113,7 @@ class BaseTestCases:
     class BaseDeleteTestsMixin(APITestCase):
         delete_path_name: str
 
-        def test_delete_logged_in(self):
+        def test_delete_by_staff(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 

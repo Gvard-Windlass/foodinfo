@@ -92,6 +92,34 @@ class TestIngredientViews(
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["id"], 26)
 
+    def test_update_by_user_access(self):
+        credentials = TestUsers.get_user1_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.put_path_name, args=[31])
+        response = self.client.put(url, data=self.default_put_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        credentials = TestUsers.get_user2_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        response = self.client.put(url, data=self.default_put_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_delete_by_user_access(self):
+        credentials = TestUsers.get_user1_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.delete_path_name, args=[31])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        credentials = TestUsers.get_user2_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
 
 class TestMeasureViews(BaseTestCases.BaseCRUDViewTests):
     fixtures = ["users.json", "culinary.json"]
