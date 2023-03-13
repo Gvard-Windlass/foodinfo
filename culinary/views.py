@@ -5,7 +5,7 @@ from .models import Ingredient, Measure
 from .permissions import HasAccessOrReadOnly, HasAccess
 
 
-class IngredientChange(
+class IngredientEdit(
     mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
 ):
     queryset = Ingredient.objects.all().order_by("name")

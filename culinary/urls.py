@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     path(
         "ingredients/edit/<int:pk>",
-        views.IngredientChange.as_view(),
+        views.IngredientEdit.as_view(),
         name="ingredients-edit",
     ),
 ]
