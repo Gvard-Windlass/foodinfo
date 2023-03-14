@@ -4,7 +4,12 @@
         "pk": 1,
         "fields": {
             "name": "test ingredient 0",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -12,7 +17,12 @@
         "pk": 2,
         "fields": {
             "name": "test ingredient 1",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -20,7 +30,12 @@
         "pk": 3,
         "fields": {
             "name": "test ingredient 2",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -28,7 +43,12 @@
         "pk": 4,
         "fields": {
             "name": "test ingredient 3",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -36,7 +56,12 @@
         "pk": 5,
         "fields": {
             "name": "test ingredient 4",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -44,7 +69,12 @@
         "pk": 6,
         "fields": {
             "name": "test ingredient 5",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -52,7 +82,12 @@
         "pk": 7,
         "fields": {
             "name": "test ingredient 6",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -60,7 +95,12 @@
         "pk": 8,
         "fields": {
             "name": "test ingredient 7",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -68,7 +108,12 @@
         "pk": 9,
         "fields": {
             "name": "test ingredient 8",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -76,7 +121,12 @@
         "pk": 10,
         "fields": {
             "name": "test ingredient 9",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -84,7 +134,12 @@
         "pk": 11,
         "fields": {
             "name": "test ingredient 10",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -92,7 +147,12 @@
         "pk": 12,
         "fields": {
             "name": "test ingredient 11",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -100,7 +160,12 @@
         "pk": 13,
         "fields": {
             "name": "test ingredient 12",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -108,7 +173,12 @@
         "pk": 14,
         "fields": {
             "name": "test ingredient 13",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -116,7 +186,12 @@
         "pk": 15,
         "fields": {
             "name": "test ingredient 14",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -124,7 +199,12 @@
         "pk": 16,
         "fields": {
             "name": "test ingredient 15",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -132,7 +212,12 @@
         "pk": 17,
         "fields": {
             "name": "test ingredient 16",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -140,7 +225,12 @@
         "pk": 18,
         "fields": {
             "name": "test ingredient 17",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -148,7 +238,12 @@
         "pk": 19,
         "fields": {
             "name": "test ingredient 18",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -156,7 +251,12 @@
         "pk": 20,
         "fields": {
             "name": "test ingredient 19",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -164,7 +264,12 @@
         "pk": 21,
         "fields": {
             "name": "test ingredient 20",
-            "user": 1
+            "user": 1,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -172,7 +277,12 @@
         "pk": 22,
         "fields": {
             "name": "test ingredient 21",
-            "user": 2
+            "user": 2,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -180,7 +290,12 @@
         "pk": 23,
         "fields": {
             "name": "test ingredient 22",
-            "user": 2
+            "user": 2,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -188,7 +303,12 @@
         "pk": 24,
         "fields": {
             "name": "test ingredient 23",
-            "user": 2
+            "user": 2,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -196,7 +316,12 @@
         "pk": 25,
         "fields": {
             "name": "test ingredient 24",
-            "user": 2
+            "user": 2,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -204,7 +329,12 @@
         "pk": 26,
         "fields": {
             "name": "test ingredient 25",
-            "user": 2
+            "user": 2,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -212,7 +342,12 @@
         "pk": 27,
         "fields": {
             "name": "test ingredient 26",
-            "user": 3
+            "user": 3,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -220,7 +355,12 @@
         "pk": 28,
         "fields": {
             "name": "test ingredient 27",
-            "user": 3
+            "user": 3,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -228,7 +368,12 @@
         "pk": 29,
         "fields": {
             "name": "test ingredient 28",
-            "user": 3
+            "user": 3,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -236,7 +381,12 @@
         "pk": 30,
         "fields": {
             "name": "test ingredient 29",
-            "user": 3
+            "user": 3,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
         }
     },
     {
@@ -244,7 +394,73 @@
         "pk": 31,
         "fields": {
             "name": "test ingredient 30",
-            "user": 3
+            "user": 3,
+            "category": "Other",
+            "calories": null,
+            "proteins": null,
+            "fats": null,
+            "carbs": null
+        }
+    },
+    {
+        "model": "culinary.fridge",
+        "pk": 1,
+        "fields": {
+            "name": "test fridge 0",
+            "user": 1,
+            "shelf": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21
+            ]
+        }
+    },
+    {
+        "model": "culinary.fridge",
+        "pk": 2,
+        "fields": {
+            "name": "test fridge 1",
+            "user": 2,
+            "shelf": [
+                22,
+                23,
+                24,
+                25,
+                26
+            ]
+        }
+    },
+    {
+        "model": "culinary.fridge",
+        "pk": 3,
+        "fields": {
+            "name": "test fridge 2",
+            "user": 3,
+            "shelf": [
+                27,
+                28,
+                29,
+                30,
+                31
+            ]
         }
     }
 ]
