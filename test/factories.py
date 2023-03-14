@@ -1,7 +1,7 @@
 import factory
 import factory.random
 from django.contrib.auth.models import User
-from culinary.models import Ingredient, Measure
+from culinary.models import Ingredient, Measure, Fridge
 
 factory.random.reseed_random("foodinfo")
 
@@ -36,3 +36,21 @@ class MeasureFactory(factory.django.DjangoModelFactory):
         django_get_or_create = ("name",)
 
     name = factory.Sequence(lambda n: "test measure %d" % n)
+
+
+class FridgeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Fridge
+        django_get_or_create = ("name",)
+
+    name = factory.Sequence(lambda n: "test fridge %d" % n)
+    user_id = 1
+
+    @factory.post_generation
+    def shelf(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for item in extracted:
+                self.shelf.add(item)

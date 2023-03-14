@@ -65,6 +65,12 @@ class Ingredient(models.Model):
         return self.name
 
 
+class Fridge(models.Model):
+    name = models.CharField(max_length=50)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    shelf = models.ManyToManyField(Ingredient)
+
+
 class Measure(models.Model):
     name = models.CharField(max_length=25)
 

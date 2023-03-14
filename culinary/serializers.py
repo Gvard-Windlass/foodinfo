@@ -1,4 +1,4 @@
-from .models import Ingredient, Measure
+from .models import Ingredient, Measure, Fridge
 from rest_framework import serializers
 
 
@@ -23,3 +23,12 @@ class MeasureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Measure
         fields = ["id", "name"]
+
+
+class FridgeSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source="user.id")
+    shelf = IngredientSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Fridge
+        fields = ["id", "name", "user", "shelf"]
