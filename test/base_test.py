@@ -63,14 +63,14 @@ class BaseTestCases:
         objects_by_user1: int
         objects_by_user2: int
 
-        def test_get_list_anonymous(self):
+        def test_get_list_by_guest(self):
             url = reverse(self.list_path_name)
             response = self.client.get(url)
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(len(response.json()), self.objects_by_staff)
 
-        def test_get_list_staff_access(self):
+        def test_get_list_by_staff(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -83,7 +83,7 @@ class BaseTestCases:
             )
             self.assertEqual(len(staff_response.json()), total)
 
-        def test_get_list_user_access(self):
+        def test_get_list_by_user(self):
             url = reverse(self.list_path_name)
 
             credentials = TestUsers.get_user1_credentials()
@@ -118,7 +118,7 @@ class BaseTestCases:
         staff_object_id: int
         user1_object_id: int
 
-        def test_get_specific_anonymous(self):
+        def test_get_specific_by_guest(self):
             url = reverse(self.single_path_name, args=[self.staff_object_id])
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -128,7 +128,7 @@ class BaseTestCases:
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        def test_get_specific_staff_acess(self):
+        def test_get_specific_by_staff(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -137,7 +137,7 @@ class BaseTestCases:
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(response.json()["id"], self.user1_object_id)
 
-        def test_get_specific_user_acess(self):
+        def test_get_specific_by_user(self):
             credentials = TestUsers.get_user1_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -157,7 +157,6 @@ class BaseTestCases:
 
         If staff user, all objects are accessible."""
 
-
     class BasePostTestsMixin(APITestCase):
         """Test post correct and incorrect data by staff, correct data by anonymous user."""
 
@@ -172,7 +171,7 @@ class BaseTestCases:
             response = self.client.post(url, data=self.default_post_data, format="json")
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        def test_post_anonymous(self):
+        def test_post_by_guest(self):
             url = reverse(self.post_path_name)
             response = self.client.post(url, data={"name": "anon"}, format="json")
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -222,7 +221,7 @@ class BaseTestCases:
             response = self.client.put(url, data=self.default_put_data, format="json")
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        def test_update_anonymous(self):
+        def test_update_by_guest(self):
             url = reverse(self.put_path_name, args=[1])
             response = self.client.put(url, data=self.default_put_data, format="json")
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -240,7 +239,7 @@ class BaseTestCases:
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        def test_delete_anonymous(self):
+        def test_delete_by_guest(self):
             url = reverse(self.delete_path_name, args=[1])
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -261,7 +260,7 @@ class BaseTestCases:
         delete_path_name: str
         default_put_data: Dict
 
-        def test_update_by_user_access(self):
+        def test_update_by_user(self):
             credentials = TestUsers.get_user1_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -275,7 +274,7 @@ class BaseTestCases:
             response = self.client.put(url, data=self.default_put_data, format="json")
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        def test_delete_by_user_access(self):
+        def test_delete_by_user(self):
             credentials = TestUsers.get_user1_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -328,7 +327,5 @@ class BaseTestCases:
         """Basic tests with successful safe methods calls performed by anonymous user and
         authenticated staff user successfull calls for post, put, delete."""
 
-
     class BaseCUDViewTests(BasePostTestsMixin, BasePutTestsMixin, BaseDeleteTestsMixin):
         """Basic test checks, ensuring anonymous users can't use post, put, delete calls."""
-
