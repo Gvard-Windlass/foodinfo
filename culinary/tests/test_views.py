@@ -1,14 +1,19 @@
+from typing_extensions import override
 from django.urls import reverse
 from rest_framework import status
 from test.factories import IngredientFactory, MeasureFactory
 from rest_framework.test import APITestCase
-from test.base_test import BaseTestCases, TestUsers
+from test.base_test import BaseTestMixins, TestUsers
 
 
 class TestIngredientViews(
-    BaseTestCases.BaseCUDViewTests,
-    BaseTestCases.BaseGetByUserTestsMixin,
-    BaseTestCases.BaseEditByUserTestsMixin,
+    BaseTestMixins.GuestLimitedGet,
+    BaseTestMixins.GuestForbiddenPostPutDelete,
+    BaseTestMixins.UserLimitedGet,
+    BaseTestMixins.UserPermittedPost,
+    BaseTestMixins.OwnerPermittedPutDelete,
+    BaseTestMixins.StaffUnlimitedGet,
+    BaseTestMixins.StaffPermittedPostPutDelete,
     APITestCase,
 ):
     fixtures = ["users.json", "culinary.json"]
@@ -42,7 +47,12 @@ class TestIngredientViews(
 
 
 class TestMeasureViews(
-    BaseTestCases.BaseCRUDViewTests, BaseTestCases.BaseCUDForbiddenForUsersTestsMixin
+    BaseTestMixins.GuestPermittedGet,
+    BaseTestMixins.GuestForbiddenPostPutDelete,
+    BaseTestMixins.UserPermittedGet,
+    BaseTestMixins.UserForbiddenPostPutDelete,
+    BaseTestMixins.StaffPermittedGet,
+    BaseTestMixins.StaffPermittedPostPutDelete,
 ):
     fixtures = ["users.json", "culinary.json"]
 
@@ -59,6 +69,7 @@ class TestMeasureViews(
         self.default_put_data = {"id": 2, "name": "new name"}
 
         self.delete_path_name = "measures-detail"
+        self.user1_object_id = None
 
         super().setUp()
 
@@ -71,8 +82,8 @@ class TestMeasureViews(
 
 
 class TestFridgeViews(
-    BaseTestCases.BaseGetForbiddenForGuestsTestsMixin,
-    BaseTestCases.BaseGetObjectByUserTestsMixin,
+    BaseTestMixins.GuestForbiddenGet,
+    BaseTestMixins.StaffUnlimitedGet,
     APITestCase,
 ):
     fixtures = ["users.json", "culinary.json"]
@@ -81,8 +92,11 @@ class TestFridgeViews(
         self.list_path_name = "shelfs-list"
         self.single_path_name = "shelfs-detail"
 
+        self.staff_object_id = 1
         self.user1_object_id = 2
+        self.user2_object_id = 3
 
+    @override
     def test_get_list_by_staff(self):
         credentials = TestUsers.get_staff_credentials()
         self.assertTrue(self.client.login(**credentials))
@@ -120,3 +134,20 @@ class TestFridgeViews(
 
         with self.assertRaises(AssertionError):
             self.assertCountEqual(user1_shelf, user2_shelf)
+
+    def test_get_specific_by_user(self):
+        credentials = TestUsers.get_user1_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.single_path_name, args=[self.user1_object_id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["id"], self.user1_object_id)
+
+        url = reverse(self.single_path_name, args=[self.staff_object_id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        url = reverse(self.single_path_name, args=[self.user2_object_id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

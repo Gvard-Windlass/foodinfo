@@ -24,12 +24,54 @@ class TestUsers:
         return cls._get_credentials(2)
 
 
-class BaseTestCases:
-    class BaseGetTestsMixin(APITestCase):
-        """Test get object, get list of objects, get 404 object by anonymous user"""
+class GetVars:
+    single_path_name: str
+    list_path_name: str
 
-        single_path_name: str
-        list_path_name: str
+
+class GetCompareVars:
+    objects_by_staff: int
+    objects_by_user1: int
+    objects_by_user2: int
+    user1_object_id: int
+    user2_object_id: int
+    staff_object_id: int
+
+
+class PostVars:
+    default_post_data: Dict
+    post_path_name: str
+
+
+class PutVars:
+    default_put_data: Dict
+    put_path_name: str
+
+
+class DeleteVars:
+    default_delete_data: Dict
+    delete_path_name: str
+
+
+class BaseTestMixins:
+    class GuestForbiddenGet(GetVars, APITestCase):
+        """Test that anonymous users can't get object or list of objects"""
+
+        def test_get_list_by_guest(self):
+            url = reverse(self.list_path_name)
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        def test_get_specific_by_guest(self):
+            url = reverse(self.single_path_name, args=[1])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    class GuestPermittedGet(GetVars, APITestCase):
+        """Test that anonymous users can get object or list of objects.
+
+        GET - 200, 404"""
+
         factory_count: int
 
         def test_get_list(self):
@@ -49,119 +91,64 @@ class BaseTestCases:
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    class BaseGetListByUserTestsMixin(APITestCase):
-        """Test get list of objects with restriction according to user premissions.
+    class UserPermittedGet(GetVars, APITestCase):
+        """Test that non-staff users can get object or list of objects.
 
-        If anonymous, only objects created by staff users.
+        GET - 200, 404"""
 
-        If regular user, only objects created by self and staff.
+        factory_count: int
 
-        If staff, all objects"""
+        def test_get_list(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
 
-        list_path_name: str
-        objects_by_staff: int
-        objects_by_user1: int
-        objects_by_user2: int
-
-        def test_get_list_by_guest(self):
             url = reverse(self.list_path_name)
             response = self.client.get(url)
-
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(len(response.json()), self.objects_by_staff)
+            self.assertEqual(len(response.json()), self.factory_count)
 
-        def test_get_list_by_staff(self):
+        def test_get_specific(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.single_path_name, args=[1])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.json()["id"], 1)
+
+    class StaffPermittedGet(GetVars, APITestCase):
+        """Test that staff users can get object or list of objects.
+
+        GET - 200, 404"""
+
+        factory_count: int
+
+        def test_get_list(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 
             url = reverse(self.list_path_name)
-            staff_response = self.client.get(url)
-
-            self.assertEqual(staff_response.status_code, status.HTTP_200_OK)
-            total = sum(
-                [self.objects_by_staff, self.objects_by_user1, self.objects_by_user2]
-            )
-            self.assertEqual(len(staff_response.json()), total)
-
-        def test_get_list_by_user(self):
-            url = reverse(self.list_path_name)
-
-            credentials = TestUsers.get_user1_credentials()
-            self.assertTrue(self.client.login(**credentials))
-
-            user1_response = self.client.get(url)
-            self.assertEqual(user1_response.status_code, status.HTTP_200_OK)
-            user1_total = sum([self.objects_by_staff, self.objects_by_user1])
-            self.assertEqual(len(user1_response.json()), user1_total)
-
-            credentials = TestUsers.get_user2_credentials()
-            self.assertTrue(self.client.login(**credentials))
-
-            user2_response = self.client.get(url)
-            self.assertEqual(user2_response.status_code, status.HTTP_200_OK)
-            user2_total = sum([self.objects_by_staff, self.objects_by_user2])
-            self.assertEqual(len(user2_response.json()), user2_total)
-
-            with self.assertRaises(AssertionError):
-                self.assertCountEqual(user1_response.json(), user2_response.json())
-
-    class BaseGetObjectByUserTestsMixin(APITestCase):
-        """Test get object with restriction according to user premissions.
-
-        If anonymous, only objects created by staff users are available.
-
-        If regular user, only objects created by self and staff are available.
-
-        If staff, all objects are available."""
-
-        single_path_name: str
-        staff_object_id: int
-        user1_object_id: int
-
-        def test_get_specific_by_guest(self):
-            url = reverse(self.single_path_name, args=[self.staff_object_id])
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(response.json()["id"], self.staff_object_id)
+            self.assertEqual(len(response.json()), self.factory_count)
 
-            url = reverse(self.single_path_name, args=[self.user1_object_id])
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-        def test_get_specific_by_staff(self):
+        def test_get_specific(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 
-            url = reverse(self.single_path_name, args=[self.user1_object_id])
+            url = reverse(self.single_path_name, args=[1])
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(response.json()["id"], self.user1_object_id)
+            self.assertEqual(response.json()["id"], 1)
 
-        def test_get_specific_by_user(self):
-            credentials = TestUsers.get_user1_credentials()
-            self.assertTrue(self.client.login(**credentials))
+    class StaffPermittedPostPutDelete(PostVars, PutVars, DeleteVars, APITestCase):
+        """Test that staff can create, update, delete any objects.
 
-            url = reverse(self.single_path_name, args=[self.user1_object_id])
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(response.json()["id"], self.user1_object_id)
+        POST - 201, 400
 
-    class BaseGetByUserTestsMixin(
-        BaseGetListByUserTestsMixin, BaseGetObjectByUserTestsMixin
-    ):
-        """Test get object and list of objects according to user permissions.
+        PUT - 200, 400, 404
 
-        If anonymous, only staff-created objects are accessible.
-
-        If regular user, only self- and staff-created objects are accessible.
-
-        If staff user, all objects are accessible."""
-
-    class BasePostTestsMixin(APITestCase):
-        """Test post correct and incorrect data by staff, correct data by anonymous user."""
-
-        default_post_data: Dict
-        post_path_name: str
+        DELETE - 204, 404"""
 
         def test_post_by_staff(self):
             credentials = TestUsers.get_staff_credentials()
@@ -171,11 +158,6 @@ class BaseTestCases:
             response = self.client.post(url, data=self.default_post_data, format="json")
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        def test_post_by_guest(self):
-            url = reverse(self.post_path_name)
-            response = self.client.post(url, data={"name": "anon"}, format="json")
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
         def test_post_bad_data(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
@@ -184,12 +166,6 @@ class BaseTestCases:
             data = {"incorrect field": 1}
             response = self.client.post(url, data=data, format="json")
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    class BasePutTestsMixin(APITestCase):
-        """Test update with correct and incorrect data by staff, correct data by anonymous user."""
-
-        default_put_data: Dict
-        put_path_name: str
 
         def test_update_by_staff(self):
             id = 1
@@ -221,16 +197,6 @@ class BaseTestCases:
             response = self.client.put(url, data=self.default_put_data, format="json")
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        def test_update_by_guest(self):
-            url = reverse(self.put_path_name, args=[1])
-            response = self.client.put(url, data=self.default_put_data, format="json")
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    class BaseDeleteTestsMixin(APITestCase):
-        """Test delete object by staff and anonymous user, delete 404 object by staff."""
-
-        delete_path_name: str
-
         def test_delete_by_staff(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
@@ -238,11 +204,6 @@ class BaseTestCases:
             url = reverse(self.delete_path_name, args=[1])
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        def test_delete_by_guest(self):
-            url = reverse(self.delete_path_name, args=[1])
-            response = self.client.delete(url)
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         def test_delete_non_existant(self):
             credentials = TestUsers.get_staff_credentials()
@@ -252,13 +213,66 @@ class BaseTestCases:
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    class BaseEditByUserTestsMixin(APITestCase):
-        """Test put and delete with restriction to those users who created the object."""
+    class UserForbiddenPostPutDelete(PostVars, PutVars, DeleteVars, APITestCase):
+        """Test that regular users can't create, update, delete objects"""
+
+        def test_post_by_user(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.post_path_name)
+            response = self.client.post(url, data=self.default_post_data, format="json")
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        def test_update_by_user(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.put_path_name, args=[1])
+            response = self.client.put(url, data=self.default_put_data, format="json")
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        def test_delete_by_user(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.delete_path_name, args=[1])
+            response = self.client.delete(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    class GuestForbiddenPostPutDelete(PostVars, PutVars, DeleteVars, APITestCase):
+        """Test that anonymous users can't create, update, delete any objects"""
+
+        def test_post_by_guest(self):
+            url = reverse(self.post_path_name)
+            response = self.client.post(url, data={"name": "anon"}, format="json")
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        def test_update_by_guest(self):
+            url = reverse(self.put_path_name, args=[1])
+            response = self.client.put(url, data=self.default_put_data, format="json")
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        def test_delete_by_guest(self):
+            url = reverse(self.delete_path_name, args=[1])
+            response = self.client.delete(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    class UserPermittedPost(PostVars, APITestCase):
+        """Test that authenticated non-staff users can create objects"""
+
+        def test_post_by_user(self):
+            credentials = TestUsers.get_user1_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.post_path_name)
+            response = self.client.post(url, data=self.default_post_data, format="json")
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    class OwnerPermittedPutDelete(PutVars, DeleteVars, APITestCase):
+        """Test that among non-staff users only those who created objects can update and delete them"""
 
         user2_object_id: int
-        put_path_name: str
-        delete_path_name: str
-        default_put_data: Dict
 
         def test_update_by_user(self):
             credentials = TestUsers.get_user1_credentials()
@@ -288,60 +302,89 @@ class BaseTestCases:
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    class BaseGetForbiddenForGuestsTestsMixin(APITestCase):
-        """Test that anonymous users can't get object or list of objects"""
-
-        single_path_name: str
-        list_path_name: str
+    class GuestLimitedGet(GetVars, GetCompareVars, APITestCase):
+        """Test that anonymous user can get only objects created by staff"""
 
         def test_get_list_by_guest(self):
             url = reverse(self.list_path_name)
             response = self.client.get(url)
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(len(response.json()), self.objects_by_staff)
 
         def test_get_specific_by_guest(self):
-            url = reverse(self.single_path_name, args=[1])
+            url = reverse(self.single_path_name, args=[self.staff_object_id])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.json()["id"], self.staff_object_id)
+
+            url = reverse(self.single_path_name, args=[self.user1_object_id])
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    class BaseCUDForbiddenForUsersTestsMixin(APITestCase):
-        """Test that only users who created the objects can post, put, delete them."""
+    class StaffUnlimitedGet(GetVars, GetCompareVars, APITestCase):
+        """Test that staff users can get any objects regardless of who created them"""
 
-        post_path_name: str
-        delete_path_name: str
-        put_path_name: str
-        default_post_data: Dict
-        default_put_data: Dict
+        def test_get_list_by_staff(self):
+            credentials = TestUsers.get_staff_credentials()
+            self.assertTrue(self.client.login(**credentials))
 
-        def test_post_by_user(self):
+            url = reverse(self.list_path_name)
+            staff_response = self.client.get(url)
+
+            self.assertEqual(staff_response.status_code, status.HTTP_200_OK)
+            total = sum(
+                [self.objects_by_staff, self.objects_by_user1, self.objects_by_user2]
+            )
+            self.assertEqual(len(staff_response.json()), total)
+
+        def test_get_specific_by_staff(self):
+            credentials = TestUsers.get_staff_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            url = reverse(self.single_path_name, args=[self.user1_object_id])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.json()["id"], self.user1_object_id)
+
+    class UserLimitedGet(GetVars, GetCompareVars, APITestCase):
+        """Test that non-staff users can only get objects created by themselves or staff"""
+
+        def test_get_list_by_user(self):
+            url = reverse(self.list_path_name)
+
             credentials = TestUsers.get_user1_credentials()
             self.assertTrue(self.client.login(**credentials))
 
-            url = reverse(self.post_path_name)
-            response = self.client.post(url, data=self.default_post_data, format="json")
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+            user1_response = self.client.get(url)
+            self.assertEqual(user1_response.status_code, status.HTTP_200_OK)
+            user1_total = sum([self.objects_by_staff, self.objects_by_user1])
+            self.assertEqual(len(user1_response.json()), user1_total)
 
-        def test_update_by_user(self):
+            credentials = TestUsers.get_user2_credentials()
+            self.assertTrue(self.client.login(**credentials))
+
+            user2_response = self.client.get(url)
+            self.assertEqual(user2_response.status_code, status.HTTP_200_OK)
+            user2_total = sum([self.objects_by_staff, self.objects_by_user2])
+            self.assertEqual(len(user2_response.json()), user2_total)
+
+            with self.assertRaises(AssertionError):
+                self.assertCountEqual(user1_response.json(), user2_response.json())
+
+        def test_get_specific_by_user(self):
             credentials = TestUsers.get_user1_credentials()
             self.assertTrue(self.client.login(**credentials))
 
-            url = reverse(self.put_path_name, args=[1])
-            response = self.client.put(url, data=self.default_put_data, format="json")
+            url = reverse(self.single_path_name, args=[self.user1_object_id])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.json()["id"], self.user1_object_id)
+
+            url = reverse(self.single_path_name, args=[self.staff_object_id])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+            url = reverse(self.single_path_name, args=[self.user2_object_id])
+            response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-        def test_delete_by_user(self):
-            credentials = TestUsers.get_user1_credentials()
-            self.assertTrue(self.client.login(**credentials))
-
-            url = reverse(self.delete_path_name, args=[1])
-            response = self.client.delete(url)
-            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    class BaseCRUDViewTests(
-        BaseGetTestsMixin, BasePostTestsMixin, BasePutTestsMixin, BaseDeleteTestsMixin
-    ):
-        """Basic tests with successful safe methods calls performed by anonymous user and
-        authenticated staff user successfull calls for post, put, delete."""
-
-    class BaseCUDViewTests(BasePostTestsMixin, BasePutTestsMixin, BaseDeleteTestsMixin):
-        """Basic test checks, ensuring anonymous users can't use post, put, delete calls."""
