@@ -23,4 +23,6 @@ urlpatterns = [
         views.IngredientEdit.as_view(),
         name="ingredients-edit",
     ),
+    path("fridge/", views.FridgeList.as_view(), name="shelfs-list"),
+    path("fridge/<int:pk>", views.FridgeDetail.as_view(), name="shelfs-detail"),
 ]

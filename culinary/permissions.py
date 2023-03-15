@@ -32,3 +32,11 @@ class IsStaffOrReadOnly(permissions.BasePermission):
             or request.user
             and request.user.is_staff
         )
+
+
+class IsOwnerOrStaff(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return bool(request.user == obj.user or request.user.is_staff)
+
+    def has_permission(self, request, view):
+        return bool(request.user.is_authenticated)

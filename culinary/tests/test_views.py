@@ -68,3 +68,79 @@ class TestMeasureViews(
         response = self.client.get(url + "?name=ounce")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
+
+
+class TestFridgeViews(APITestCase):
+    fixtures = ["users.json", "culinary.json"]
+
+    def setUp(self) -> None:
+        self.list_path_name = "shelfs-list"
+        self.single_path_name = "shelfs-detail"
+
+        self.user1_object_id = 2
+
+    def test_get_list_anonymous(self):
+        url = reverse(self.list_path_name)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_list_by_staff(self):
+        credentials = TestUsers.get_staff_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.list_path_name)
+        response = self.client.get(url)
+
+        self.assertEqual(len(response.json()), 3)
+        self.assertEqual(len(response.json()[0]["shelf"]), 21)
+        self.assertEqual(len(response.json()[1]["shelf"]), 5)
+        self.assertEqual(len(response.json()[2]["shelf"]), 5)
+
+    def test_get_list_by_user(self):
+        url = reverse(self.list_path_name)
+
+        credentials = TestUsers.get_user1_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        user1_response = self.client.get(url)
+        user1_data = user1_response.json()
+        user1_shelf = user1_data[0]["shelf"]
+        self.assertEqual(user1_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(user1_data), 1)
+        self.assertEqual(len(user1_shelf), 5)
+
+        credentials = TestUsers.get_user2_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        user2_response = self.client.get(url)
+        user2_data = user2_response.json()
+        user2_shelf = user2_data[0]["shelf"]
+        self.assertEqual(user2_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(user2_data), 1)
+        self.assertEqual(len(user2_shelf), 5)
+
+        with self.assertRaises(AssertionError):
+            self.assertCountEqual(user1_shelf, user2_shelf)
+
+    def test_get_specific_anonymous(self):
+        url = reverse(self.single_path_name, args=[1])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_specific_staff_acess(self):
+        credentials = TestUsers.get_staff_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.single_path_name, args=[self.user1_object_id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["id"], self.user1_object_id)
+
+    def test_get_specific_user_acess(self):
+        credentials = TestUsers.get_user1_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.single_path_name, args=[self.user1_object_id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["id"], self.user1_object_id)

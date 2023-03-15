@@ -1,8 +1,13 @@
 from django.db.models import Q
 from rest_framework import viewsets, permissions, mixins, generics
-from .serializers import IngredientSerializer, MeasureSerializer
-from .models import Ingredient, Measure
-from .permissions import HasAccessOrReadOnly, HasAccess, IsStaffOrReadOnly
+from .serializers import *
+from .models import *
+from .permissions import (
+    HasAccessOrReadOnly,
+    HasAccess,
+    IsStaffOrReadOnly,
+    IsOwnerOrStaff,
+)
 
 
 class IngredientEdit(
@@ -69,3 +74,27 @@ class MeasureViewSet(viewsets.ModelViewSet):
         if name:
             filters.append(Q(name__contains=name))
         return Measure.objects.filter(*filters).order_by("name")
+
+
+class FridgeList(mixins.ListModelMixin, generics.GenericAPIView):
+    serializer_class = FridgeSerializer
+    permission_classes = [IsOwnerOrStaff]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_staff:
+            return Fridge.objects.filter(user_id=user.id)
+
+        return Fridge.objects.all()
+
+
+class FridgeDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = Fridge.objects.all()
+    serializer_class = FridgeSerializer
+    permission_classes = [IsOwnerOrStaff]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
