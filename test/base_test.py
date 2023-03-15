@@ -288,6 +288,22 @@ class BaseTestCases:
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    class BaseGetForbiddenForGuestsTestsMixin(APITestCase):
+        """Test that anonymous users can't get object or list of objects"""
+
+        single_path_name: str
+        list_path_name: str
+
+        def test_get_list_by_guest(self):
+            url = reverse(self.list_path_name)
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        def test_get_specific_by_guest(self):
+            url = reverse(self.single_path_name, args=[1])
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     class BaseCUDForbiddenForUsersTestsMixin(APITestCase):
         """Test that only users who created the objects can post, put, delete them."""
 

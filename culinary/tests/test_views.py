@@ -70,7 +70,11 @@ class TestMeasureViews(
         self.assertEqual(len(response.json()), 1)
 
 
-class TestFridgeViews(APITestCase):
+class TestFridgeViews(
+    BaseTestCases.BaseGetForbiddenForGuestsTestsMixin,
+    BaseTestCases.BaseGetObjectByUserTestsMixin,
+    APITestCase,
+):
     fixtures = ["users.json", "culinary.json"]
 
     def setUp(self) -> None:
@@ -78,11 +82,6 @@ class TestFridgeViews(APITestCase):
         self.single_path_name = "shelfs-detail"
 
         self.user1_object_id = 2
-
-    def test_get_list_by_guest(self):
-        url = reverse(self.list_path_name)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_list_by_staff(self):
         credentials = TestUsers.get_staff_credentials()
@@ -121,26 +120,3 @@ class TestFridgeViews(APITestCase):
 
         with self.assertRaises(AssertionError):
             self.assertCountEqual(user1_shelf, user2_shelf)
-
-    def test_get_specific_by_guest(self):
-        url = reverse(self.single_path_name, args=[1])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_get_specific_by_staff(self):
-        credentials = TestUsers.get_staff_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        url = reverse(self.single_path_name, args=[self.user1_object_id])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["id"], self.user1_object_id)
-
-    def test_get_specific_by_user(self):
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
-
-        url = reverse(self.single_path_name, args=[self.user1_object_id])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()["id"], self.user1_object_id)
