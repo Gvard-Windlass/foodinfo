@@ -5,6 +5,8 @@ from rest_framework.test import APITestCase
 
 
 class TestUsers:
+    """Provides methods for different users logins for testing"""
+
     @classmethod
     def _get_credentials(cls, user_n):
         return {"username": f"user {user_n}", "password": f"Bk7^31&3LDXt{user_n}"}
@@ -24,6 +26,8 @@ class TestUsers:
 
 class BaseTestCases:
     class BaseGetTestsMixin(APITestCase):
+        """Test get object, get list of objects, get 404 object by anonymous user"""
+
         single_path_name: str
         list_path_name: str
         factory_count: int
@@ -46,6 +50,14 @@ class BaseTestCases:
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     class BaseGetListByUserTestsMixin(APITestCase):
+        """Test get list of objects with restriction according to user premissions.
+
+        If anonymous, only objects created by staff users.
+
+        If regular user, only objects created by self and staff.
+
+        If staff, all objects"""
+
         list_path_name: str
         objects_by_staff: int
         objects_by_user1: int
@@ -94,6 +106,14 @@ class BaseTestCases:
                 self.assertCountEqual(user1_response.json(), user2_response.json())
 
     class BaseGetObjectByUserTestsMixin(APITestCase):
+        """Test get object with restriction according to user premissions.
+
+        If anonymous, only objects created by staff users are available.
+
+        If regular user, only objects created by self and staff are available.
+
+        If staff, all objects are available."""
+
         single_path_name: str
         staff_object_id: int
         user1_object_id: int
@@ -129,9 +149,18 @@ class BaseTestCases:
     class BaseGetByUserTestsMixin(
         BaseGetListByUserTestsMixin, BaseGetObjectByUserTestsMixin
     ):
-        pass
+        """Test get object and list of objects according to user permissions.
+
+        If anonymous, only staff-created objects are accessible.
+
+        If regular user, only self- and staff-created objects are accessible.
+
+        If staff user, all objects are accessible."""
+
 
     class BasePostTestsMixin(APITestCase):
+        """Test post correct and incorrect data by staff, correct data by anonymous user."""
+
         default_post_data: Dict
         post_path_name: str
 
@@ -158,6 +187,8 @@ class BaseTestCases:
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     class BasePutTestsMixin(APITestCase):
+        """Test update with correct and incorrect data by staff, correct data by anonymous user."""
+
         default_put_data: Dict
         put_path_name: str
 
@@ -197,6 +228,8 @@ class BaseTestCases:
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     class BaseDeleteTestsMixin(APITestCase):
+        """Test delete object by staff and anonymous user, delete 404 object by staff."""
+
         delete_path_name: str
 
         def test_delete_by_staff(self):
@@ -221,6 +254,8 @@ class BaseTestCases:
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     class BaseEditByUserTestsMixin(APITestCase):
+        """Test put and delete with restriction to those users who created the object."""
+
         user2_object_id: int
         put_path_name: str
         delete_path_name: str
@@ -255,6 +290,8 @@ class BaseTestCases:
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     class BaseCUDForbiddenForUsersTestsMixin(APITestCase):
+        """Test that only users who created the objects can post, put, delete them."""
+
         post_path_name: str
         delete_path_name: str
         put_path_name: str
@@ -288,7 +325,10 @@ class BaseTestCases:
     class BaseCRUDViewTests(
         BaseGetTestsMixin, BasePostTestsMixin, BasePutTestsMixin, BaseDeleteTestsMixin
     ):
-        pass
+        """Basic tests with successful safe methods calls performed by anonymous user and
+        authenticated staff user successfull calls for post, put, delete."""
+
 
     class BaseCUDViewTests(BasePostTestsMixin, BasePutTestsMixin, BaseDeleteTestsMixin):
-        pass
+        """Basic test checks, ensuring anonymous users can't use post, put, delete calls."""
+
