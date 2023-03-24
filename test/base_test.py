@@ -49,7 +49,6 @@ class PutVars:
 
 
 class DeleteVars:
-    default_delete_data: Dict
     delete_path_name: str
 
 

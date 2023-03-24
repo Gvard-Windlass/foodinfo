@@ -76,12 +76,21 @@ class MeasureViewSet(viewsets.ModelViewSet):
         return Measure.objects.filter(*filters).order_by("name")
 
 
-class FridgeList(mixins.ListModelMixin, generics.GenericAPIView):
+class FridgeList(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
     serializer_class = FridgeSerializer
     permission_classes = [IsOwnerOrStaff]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            serializer.save(user=self.request.user)
 
     def get_queryset(self):
         user = self.request.user
@@ -98,3 +107,17 @@ class FridgeDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+
+class FridgeEdit(
+    mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
+):
+    queryset = Fridge.objects.all()
+    serializer_class = FridgeSerializer
+    permission_classes = [IsOwnerOrStaff]
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

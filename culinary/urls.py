@@ -25,4 +25,9 @@ urlpatterns = [
     ),
     path("fridge/", views.FridgeList.as_view(), name="shelfs-list"),
     path("fridge/<int:pk>", views.FridgeDetail.as_view(), name="shelfs-detail"),
+    path(
+        "fridge/edit/<int:pk>",
+        views.FridgeEdit.as_view(),
+        name="shelfs-edit",
+    ),
 ]

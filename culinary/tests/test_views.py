@@ -69,7 +69,6 @@ class TestMeasureViews(
         self.default_put_data = {"id": 2, "name": "new name"}
 
         self.delete_path_name = "measures-detail"
-        self.user1_object_id = None
 
         super().setUp()
 
@@ -83,7 +82,11 @@ class TestMeasureViews(
 
 class TestFridgeViews(
     BaseTestMixins.GuestForbiddenGet,
+    BaseTestMixins.GuestForbiddenPostPutDelete,
+    BaseTestMixins.UserPermittedPost,
+    BaseTestMixins.OwnerPermittedPutDelete,
     BaseTestMixins.StaffUnlimitedGet,
+    BaseTestMixins.StaffPermittedPostPutDelete,
     APITestCase,
 ):
     fixtures = ["users.json", "culinary.json"]
@@ -91,6 +94,12 @@ class TestFridgeViews(
     def setUp(self) -> None:
         self.list_path_name = "shelfs-list"
         self.single_path_name = "shelfs-detail"
+        self.post_path_name = "shelfs-list"
+        self.delete_path_name = "shelfs-edit"
+        self.put_path_name = "shelfs-edit"
+
+        self.default_put_data = {"id": 3, "name": "update fridge name"}
+        self.default_post_data = {"name": "everyday", "shelf": 2}
 
         self.staff_object_id = 1
         self.user1_object_id = 2
