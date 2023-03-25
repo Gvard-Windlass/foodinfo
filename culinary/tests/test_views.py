@@ -1,6 +1,7 @@
 from typing_extensions import override
 from django.urls import reverse
 from rest_framework import status
+from culinary.models import UtensilConversion
 from test.factories import IngredientFactory, MeasureFactory
 from rest_framework.test import APITestCase
 from test.base_test import BaseTestMixins, TestUsers
@@ -57,8 +58,7 @@ class TestMeasureViews(
     fixtures = ["users.json", "culinary.json"]
 
     def setUp(self):
-        self.factory_count = 21
-        MeasureFactory.create_batch(self.factory_count)
+        self.factory_count = 3
         self.list_path_name = "measures-list"
         self.single_path_name = "measures-detail"
 
@@ -160,3 +160,33 @@ class TestFridgeViews(
         url = reverse(self.single_path_name, args=[self.user2_object_id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class TestConversionViews(
+    BaseTestMixins.GuestPermittedGet,
+    BaseTestMixins.UserPermittedGet,
+    BaseTestMixins.GuestForbiddenPostPutDelete,
+    BaseTestMixins.UserForbiddenPostPutDelete,
+    BaseTestMixins.StaffPermittedGet,
+    BaseTestMixins.StaffPermittedPostPutDelete,
+    APITestCase,
+):
+    fixtures = ["users.json", "culinary.json"]
+
+    def setUp(self):
+        self.single_path_name = "conversion-detail"
+        self.list_path_name = "conversion-list"
+        self.post_path_name = "conversion-list"
+        self.put_path_name = "conversion-edit"
+        self.delete_path_name = "conversion-edit"
+
+        self.factory_count = 3
+        self.default_post_data = {
+            "standard_value": 205.14,
+            "utensil_id": 3,
+            "ingredient_id": 1,
+        }
+        self.default_put_data = {
+            "id": 1,
+            "standard_value": 20.5,
+        }

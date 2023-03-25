@@ -121,3 +121,39 @@ class FridgeEdit(
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+class ConversionDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = UtensilConversion.objects.all()
+    serializer_class = ConversionSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+class ConversionList(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
+    queryset = UtensilConversion.objects.all()
+    serializer_class = ConversionSerializer
+    permission_classes = [IsStaffOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class ConversionEdit(
+    mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
+):
+    queryset = UtensilConversion.objects.all()
+    serializer_class = ConversionSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

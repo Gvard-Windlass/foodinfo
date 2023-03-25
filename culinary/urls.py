@@ -30,4 +30,19 @@ urlpatterns = [
         views.FridgeEdit.as_view(),
         name="shelfs-edit",
     ),
+    path(
+        "conversion/",
+        views.ConversionList.as_view(),
+        name="conversion-list",
+    ),
+    path(
+        "conversion/<int:pk>",
+        views.ConversionDetail.as_view(),
+        name="conversion-detail",
+    ),
+    path(
+        "conversion/edit/<int:pk>",
+        views.ConversionEdit.as_view(),
+        name="conversion-edit",
+    ),
 ]
