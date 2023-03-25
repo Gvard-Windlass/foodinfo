@@ -76,3 +76,18 @@ class Measure(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class UtensilConversion(models.Model):
+    standard_value = models.FloatField(
+        validators=[MinValueValidator(0.0)], help_text="conversion value in grams"
+    )
+    utensil = models.ForeignKey(Measure, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            CheckConstraint(
+                check=Q(standard_value__gte=0.0), name="standard_value >= 0"
+            ),
+        ]

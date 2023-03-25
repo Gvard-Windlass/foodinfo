@@ -1,7 +1,7 @@
 import factory
 import factory.random
 from django.contrib.auth.models import User
-from culinary.models import Ingredient, Measure, Fridge
+from culinary.models import Ingredient, Measure, Fridge, UtensilConversion
 
 factory.random.reseed_random("foodinfo")
 
@@ -54,3 +54,12 @@ class FridgeFactory(factory.django.DjangoModelFactory):
         if extracted:
             for item in extracted:
                 self.shelf.add(item)
+
+
+class ConversionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = UtensilConversion
+
+    standard_value = factory.Faker("pyfloat", positive=True)
+    utensil = factory.SubFactory(MeasureFactory)
+    ingredient = factory.SubFactory(IngredientFactory)

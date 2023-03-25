@@ -24,3 +24,10 @@ class TestFridgeModel(TestCase):
         self.assertIsInstance(fridge, Fridge)
         self.assertIsInstance(Fridge.objects.first().shelf.first(), Ingredient)
         self.assertEqual(len(Fridge.objects.first().shelf.all()), 5)
+
+
+class TestConversionModel(TestCase):
+    def test_create_conversion(self):
+        UserFactory.create()
+        conversion = ConversionFactory.create()
+        self.assertIsInstance(conversion, UtensilConversion)
