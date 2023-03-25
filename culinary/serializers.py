@@ -48,7 +48,7 @@ class MeasureSerializer(serializers.ModelSerializer):
 
 class FridgeSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source="user.id")
-    shelf = IngredientSerializer(many=True, read_only=True)
+    shelf = IngredientSerializer(many=True, read_only=True, fields=["id", "name"])
 
     class Meta:
         model = Fridge
@@ -58,6 +58,7 @@ class FridgeSerializer(serializers.ModelSerializer):
 class ConversionSerializer(serializers.ModelSerializer):
     utensil = MeasureSerializer(many=False, read_only=True)
     ingredient = IngredientSerializer(many=False, read_only=True, fields=["id", "name"])
+
     utensil_id = serializers.PrimaryKeyRelatedField(
         queryset=Measure.objects.all(),
         write_only=True,
