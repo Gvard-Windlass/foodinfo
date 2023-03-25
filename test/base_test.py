@@ -73,19 +73,19 @@ class BaseTestMixins:
 
         factory_count: int
 
-        def test_get_list(self):
+        def test_get_list_by_guest(self):
             url = reverse(self.list_path_name)
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(len(response.json()), self.factory_count)
 
-        def test_get_specific(self):
+        def test_get_specific_by_guest(self):
             url = reverse(self.single_path_name, args=[1])
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(response.json()["id"], 1)
 
-        def test_get_non_existant(self):
+        def test_get_non_existant_by_guest(self):
             url = reverse(self.single_path_name, args=[100])
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -97,7 +97,7 @@ class BaseTestMixins:
 
         factory_count: int
 
-        def test_get_list(self):
+        def test_get_list_by_user(self):
             credentials = TestUsers.get_user1_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -106,7 +106,7 @@ class BaseTestMixins:
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(len(response.json()), self.factory_count)
 
-        def test_get_specific(self):
+        def test_get_specific_by_user(self):
             credentials = TestUsers.get_user1_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -122,7 +122,7 @@ class BaseTestMixins:
 
         factory_count: int
 
-        def test_get_list(self):
+        def test_get_list_by_staff(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 
@@ -131,7 +131,7 @@ class BaseTestMixins:
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(len(response.json()), self.factory_count)
 
-        def test_get_specific(self):
+        def test_get_specific_by_staff(self):
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 
