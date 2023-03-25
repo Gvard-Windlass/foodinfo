@@ -1,6 +1,12 @@
 from django.core.management.base import BaseCommand
 
-from test.factories import IngredientFactory, UserFactory, FridgeFactory
+from test.factories import (
+    IngredientFactory,
+    UserFactory,
+    FridgeFactory,
+    MeasureFactory,
+    ConversionFactory,
+)
 
 
 class Command(BaseCommand):
@@ -20,3 +26,7 @@ class Command(BaseCommand):
         FridgeFactory.create(user_id=staff_user.id, shelf=staff_ingrs)
         FridgeFactory.create(user_id=user1.id, shelf=user1_ingrs)
         FridgeFactory.create(user_id=user2.id, shelf=user2_ingrs)
+
+        measures = MeasureFactory.create_batch(3)
+        for i in range(len(measures)):
+            ConversionFactory.create(utensil=measures[i], ingredient=staff_ingrs[i])

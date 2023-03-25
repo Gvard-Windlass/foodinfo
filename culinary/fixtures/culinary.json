@@ -462,5 +462,53 @@
                 31
             ]
         }
+    },
+    {
+        "model": "culinary.measure",
+        "pk": 1,
+        "fields": {
+            "name": "test measure 0"
+        }
+    },
+    {
+        "model": "culinary.measure",
+        "pk": 2,
+        "fields": {
+            "name": "test measure 1"
+        }
+    },
+    {
+        "model": "culinary.measure",
+        "pk": 3,
+        "fields": {
+            "name": "test measure 2"
+        }
+    },
+    {
+        "model": "culinary.utensilconversion",
+        "pk": 1,
+        "fields": {
+            "standard_value": 10.5,
+            "utensil": 1,
+            "ingredient": 1
+        }
+    },
+    {
+        "model": "culinary.utensilconversion",
+        "pk": 2,
+        "fields": {
+            "standard_value": 120.7,
+            "utensil": 2,
+            "ingredient": 2
+        }
+    },
+    {
+        "model": "culinary.utensilconversion",
+        "pk": 3,
+        "fields": {
+            "standard_value": 44.3,
+            "utensil": 3,
+            "ingredient": 3
+        }
     }
 ]
