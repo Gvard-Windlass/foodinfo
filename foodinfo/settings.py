@@ -46,7 +46,8 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
-    ]
+    ],
+    "EXCEPTION_HANDLER": "foodinfo.utils.custom_exception_handler",
 }
 
 MIDDLEWARE = [

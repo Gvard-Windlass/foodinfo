@@ -46,6 +46,15 @@ class TestIngredientViews(
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
 
+    def test_min_value_constraint(self):
+        credentials = TestUsers.get_staff_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.post_path_name)
+        data = {"name": "carrot", "calories": -100}
+        response = self.client.post(url, data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class TestMeasureViews(
     BaseTestMixins.GuestPermittedGet,
