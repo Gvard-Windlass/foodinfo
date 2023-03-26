@@ -95,3 +95,22 @@ class UtensilConversion(models.Model):
                 name="utensil and ingredient combination must be unique",
             ),
         ]
+
+
+class Recipe(models.Model):
+    title = models.CharField(max_length=150)
+    thumbnail = models.ImageField(upload_to="", null=True, blank=True)
+    favorites = models.ManyToManyField(User, related_name="favorites")
+    portions = models.PositiveSmallIntegerField()
+    total_time = models.TimeField()
+    instructions = models.TextField()
+
+    ingredients = models.ManyToManyField(Ingredient, through="culinary.IngredientUsage")
+    author = models.ForeignKey(User, on_delete=models.PROTECT)
+
+
+class IngredientUsage(models.Model):
+    amount = models.FloatField()
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.PROTECT)
+    measure = models.ForeignKey(Measure, on_delete=models.PROTECT)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)

@@ -1,7 +1,14 @@
 import factory
 import factory.random
 from django.contrib.auth.models import User
-from culinary.models import Ingredient, Measure, Fridge, UtensilConversion
+from culinary.models import (
+    Ingredient,
+    IngredientUsage,
+    Measure,
+    Fridge,
+    Recipe,
+    UtensilConversion,
+)
 
 factory.random.reseed_random("foodinfo")
 
@@ -59,7 +66,30 @@ class FridgeFactory(factory.django.DjangoModelFactory):
 class ConversionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = UtensilConversion
+        django_get_or_create = ("id",)
 
     standard_value = factory.Faker("pyfloat", positive=True)
     utensil = factory.SubFactory(MeasureFactory)
     ingredient = factory.SubFactory(IngredientFactory)
+
+
+class RecipeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Recipe
+        django_get_or_create = ("title",)
+
+    title = factory.Sequence(lambda n: "test recipe %d" % n)
+    portions = factory.Faker("pyint", min_value=1)
+    total_time = factory.Faker("time")
+    instructions = factory.Faker("paragraph", nb_sentences=10)
+    author_id = 1
+
+
+class IngredientUsageFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = IngredientUsage
+
+    amount = factory.Faker("pyfloat", positive=True)
+    ingredient = factory.SubFactory(IngredientFactory)
+    measure = factory.SubFactory(MeasureFactory)
+    recipe = factory.SubFactory(RecipeFactory)

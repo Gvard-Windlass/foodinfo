@@ -43,3 +43,14 @@ class TestConversionModel(TestCase):
         }
         with self.assertRaises(IntegrityError):
             UtensilConversion.objects.create(**data)
+
+
+class TestRecipeModel(TestCase):
+    def test_create_recipe(self):
+        UserFactory.create()
+        recipe = RecipeFactory.create()
+        ingredients = IngredientUsageFactory.create_batch(3, recipe=recipe)
+
+        self.assertIsInstance(recipe, Recipe)
+        self.assertIsInstance(ingredients[0], IngredientUsage)
+        self.assertEqual(len(recipe.ingredients.all()), 3)
