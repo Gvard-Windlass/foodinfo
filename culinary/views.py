@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, mixins, generics
 from .serializers import *
 from .models import *
@@ -129,6 +130,17 @@ class ConversionDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+    def get_object(self):
+        ingredient_id = self.kwargs["ingredient_pk"]
+        utensil_id = self.kwargs["utensil_pk"]
+
+        obj = get_object_or_404(
+            UtensilConversion, utensil_id=utensil_id, ingredient_id=ingredient_id
+        )
+        self.check_object_permissions(self.request, obj)
+
+        return obj
 
 
 class ConversionList(

@@ -36,7 +36,7 @@ urlpatterns = [
         name="conversion-list",
     ),
     path(
-        "conversion/<int:pk>",
+        "conversion/<int:utensil_pk>/<int:ingredient_pk>",
         views.ConversionDetail.as_view(),
         name="conversion-detail",
     ),

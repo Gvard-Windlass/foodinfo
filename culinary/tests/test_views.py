@@ -190,3 +190,36 @@ class TestConversionViews(
             "id": 1,
             "standard_value": 20.5,
         }
+
+    @override
+    def test_get_specific_by_guest(self):
+        url = reverse(self.single_path_name, args=[1, 1])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["id"], 1)
+
+    @override
+    def test_get_non_existant_by_guest(self):
+        url = reverse(self.single_path_name, args=[100, 100])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @override
+    def test_get_specific_by_user(self):
+        credentials = TestUsers.get_user1_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.single_path_name, args=[1, 1])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["id"], 1)
+
+    @override
+    def test_get_specific_by_staff(self):
+        credentials = TestUsers.get_staff_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.single_path_name, args=[1, 1])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["id"], 1)
