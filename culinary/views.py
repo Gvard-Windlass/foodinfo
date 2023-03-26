@@ -1,6 +1,8 @@
 from django.db.models import Q
+from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, permissions, mixins, generics
+from rest_framework import viewsets, permissions, mixins, generics, status
+from rest_framework.response import Response
 from .serializers import *
 from .models import *
 from .permissions import (
@@ -154,7 +156,13 @@ class ConversionList(
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        try:
+            return self.create(request, *args, **kwargs)
+        except IntegrityError:
+            content = {
+                "error": "Conversion already exist. Ingredient/Utensil combination must be unique"
+            }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ConversionEdit(

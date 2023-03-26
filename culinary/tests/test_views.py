@@ -191,6 +191,19 @@ class TestConversionViews(
             "standard_value": 20.5,
         }
 
+    def test_unique_check(self):
+        credentials = TestUsers.get_staff_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        url = reverse(self.post_path_name)
+        data = {
+            "standard_value": 100,
+            "utensil_id": 1,
+            "ingredient_id": 1,
+        }
+        response = self.client.post(url, data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     @override
     def test_get_specific_by_guest(self):
         url = reverse(self.single_path_name, args=[1, 1])

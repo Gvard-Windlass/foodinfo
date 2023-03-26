@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import CheckConstraint, Q
+from django.db.models import CheckConstraint, UniqueConstraint, Q
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
@@ -89,5 +89,9 @@ class UtensilConversion(models.Model):
         constraints = [
             CheckConstraint(
                 check=Q(standard_value__gte=0.0), name="standard_value >= 0"
+            ),
+            UniqueConstraint(
+                fields=["utensil", "ingredient"],
+                name="utensil and ingredient combination must be unique",
             ),
         ]
