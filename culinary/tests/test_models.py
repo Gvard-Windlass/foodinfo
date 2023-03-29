@@ -13,9 +13,9 @@ class TestIngredientModel(TestCase):
 
 
 class TestMeasureModel(TestCase):
-    def test_create_product(self):
-        product = MeasureFactory.create()
-        self.assertIsInstance(product, Measure)
+    def test_create_measure(self):
+        measure = MeasureFactory.create()
+        self.assertIsInstance(measure, Measure)
 
 
 class TestFridgeModel(TestCase):
