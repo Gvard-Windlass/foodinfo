@@ -66,7 +66,7 @@ class FridgeFactory(factory.django.DjangoModelFactory):
 class ConversionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = UtensilConversion
-        django_get_or_create = ("id",)
+        django_get_or_create = ("utensil", "ingredient")
 
     standard_value = factory.Faker("pyfloat", positive=True)
     utensil = factory.SubFactory(MeasureFactory)
