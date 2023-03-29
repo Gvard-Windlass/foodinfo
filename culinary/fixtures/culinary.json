@@ -510,5 +510,194 @@
             "utensil": 3,
             "ingredient": 3
         }
+    },
+    {
+        "model": "culinary.recipe",
+        "pk": 1,
+        "fields": {
+            "title": "test recipe 0",
+            "thumbnail": "",
+            "portions": 6395,
+            "total_time": "15:52:05",
+            "instructions": "Good woman say man cup. Well drive particularly tend. Within behind perhaps specific. Where can nothing. Along nearly even special beat. Lead blue social. Marriage baby trade work.",
+            "author": 1,
+            "favorites": []
+        }
+    },
+    {
+        "model": "culinary.recipe",
+        "pk": 2,
+        "fields": {
+            "title": "test recipe 1",
+            "thumbnail": "",
+            "portions": 8779,
+            "total_time": "07:49:27",
+            "instructions": "Somebody consider should pay base music. Door such size painting. Power artist few. Star score above open way. Free night really represent cultural mind not. Opportunity under home meet moment sport. Environmental say small accept hair less. Trade business able picture choose feel. Get although protect focus. Water travel green cup different growth peace.",
+            "author": 1,
+            "favorites": []
+        }
+    },
+    {
+        "model": "culinary.recipe",
+        "pk": 3,
+        "fields": {
+            "title": "test recipe 2",
+            "thumbnail": "",
+            "portions": 339,
+            "total_time": "21:43:22",
+            "instructions": "Key shoulder Mr future cultural indeed. Score weight including. Big food where interview on. Analysis sort election himself. Someone edge notice other everyone author. Risk energy despite service song. Sometimes reality card rich success. Size character break activity officer. Well collection size down computer. Task role teach government. Respond PM recently game today option talk official. Understand cover summer produce.",
+            "author": 1,
+            "favorites": []
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 1,
+        "fields": {
+            "amount": 57549662635585.4,
+            "ingredient": 1,
+            "measure": 1,
+            "recipe": 1
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 2,
+        "fields": {
+            "amount": 39997078.888215,
+            "ingredient": 2,
+            "measure": 1,
+            "recipe": 1
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 3,
+        "fields": {
+            "amount": 4.94152069866164,
+            "ingredient": 3,
+            "measure": 1,
+            "recipe": 1
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 4,
+        "fields": {
+            "amount": 119448218085.71,
+            "ingredient": 4,
+            "measure": 1,
+            "recipe": 1
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 5,
+        "fields": {
+            "amount": 446.536884244799,
+            "ingredient": 5,
+            "measure": 1,
+            "recipe": 1
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 6,
+        "fields": {
+            "amount": 644741.73300926,
+            "ingredient": 6,
+            "measure": 2,
+            "recipe": 2
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 7,
+        "fields": {
+            "amount": 947787042090.949,
+            "ingredient": 7,
+            "measure": 2,
+            "recipe": 2
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 8,
+        "fields": {
+            "amount": 706493613.855785,
+            "ingredient": 8,
+            "measure": 2,
+            "recipe": 2
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 9,
+        "fields": {
+            "amount": 9712618.78048882,
+            "ingredient": 9,
+            "measure": 2,
+            "recipe": 2
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 10,
+        "fields": {
+            "amount": 858046.27085768,
+            "ingredient": 10,
+            "measure": 2,
+            "recipe": 2
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 11,
+        "fields": {
+            "amount": 9710938.43758885,
+            "ingredient": 11,
+            "measure": 3,
+            "recipe": 3
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 12,
+        "fields": {
+            "amount": 90.7372533004181,
+            "ingredient": 12,
+            "measure": 3,
+            "recipe": 3
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 13,
+        "fields": {
+            "amount": 51557.63108989,
+            "ingredient": 13,
+            "measure": 3,
+            "recipe": 3
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 14,
+        "fields": {
+            "amount": 1501840487.51174,
+            "ingredient": 14,
+            "measure": 3,
+            "recipe": 3
+        }
+    },
+    {
+        "model": "culinary.ingredientusage",
+        "pk": 15,
+        "fields": {
+            "amount": 4.77119904006252,
+            "ingredient": 15,
+            "measure": 3,
+            "recipe": 3
+        }
     }
 ]
