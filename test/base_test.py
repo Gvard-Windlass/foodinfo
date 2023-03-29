@@ -50,6 +50,7 @@ class PutVars:
 
 class DeleteVars:
     delete_path_name: str
+    delete_id: int = 1
 
 
 class BaseTestMixins:
@@ -200,7 +201,7 @@ class BaseTestMixins:
             credentials = TestUsers.get_staff_credentials()
             self.assertTrue(self.client.login(**credentials))
 
-            url = reverse(self.delete_path_name, args=[1])
+            url = reverse(self.delete_path_name, args=[self.delete_id])
             response = self.client.delete(url)
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 

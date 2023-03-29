@@ -1,7 +1,6 @@
 from typing_extensions import override
 from django.urls import reverse
 from rest_framework import status
-from culinary.models import UtensilConversion
 from test.factories import IngredientFactory, MeasureFactory
 from rest_framework.test import APITestCase
 from test.base_test import BaseTestMixins, TestUsers
@@ -38,6 +37,7 @@ class TestIngredientViews(
         self.default_put_data = {"id": 2, "name": "new name"}
 
         self.delete_path_name = "ingredients-edit"
+        self.delete_id = 21
 
     def test_filter_by_name(self):
         IngredientFactory.create(name="different name")
@@ -63,11 +63,14 @@ class TestMeasureViews(
     BaseTestMixins.UserForbiddenPostPutDelete,
     BaseTestMixins.StaffPermittedGet,
     BaseTestMixins.StaffPermittedPostPutDelete,
+    APITestCase,
 ):
     fixtures = ["users.json", "culinary.json"]
 
     def setUp(self):
-        self.factory_count = 3
+        MeasureFactory.create(name="free to delete")
+
+        self.factory_count = 4
         self.list_path_name = "measures-list"
         self.single_path_name = "measures-detail"
 
@@ -78,6 +81,7 @@ class TestMeasureViews(
         self.default_put_data = {"id": 2, "name": "new name"}
 
         self.delete_path_name = "measures-detail"
+        self.delete_id = 4
 
         super().setUp()
 
