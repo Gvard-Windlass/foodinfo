@@ -1,4 +1,11 @@
-from .models import Ingredient, Measure, Fridge, UtensilConversion
+from .models import (
+    Ingredient,
+    IngredientUsage,
+    Measure,
+    Fridge,
+    Recipe,
+    UtensilConversion,
+)
 from rest_framework import serializers
 
 
@@ -81,4 +88,31 @@ class ConversionSerializer(serializers.ModelSerializer):
             "utensil_id",
             "ingredient_id",
             "ingredient",
+        ]
+
+
+class IngredientUsageSerializer(serializers.ModelSerializer):
+    ingredient = IngredientSerializer(many=False)
+    measure = MeasureSerializer(many=False)
+
+    class Meta:
+        model = IngredientUsage
+        fields = ["id", "amount", "ingredient", "measure"]
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    ingredients = IngredientSerializer(many=True)
+    author = serializers.ReadOnlyField(source="author.name")
+
+    class Meta:
+        model = Recipe
+        fields = [
+            "title",
+            "thumbnail",
+            "favorites",
+            "portions",
+            "total_time",
+            "instructions",
+            "ingredients",
+            "author",
         ]

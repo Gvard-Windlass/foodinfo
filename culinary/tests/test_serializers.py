@@ -85,3 +85,96 @@ class TestConversionSerializer(TestCase):
             "ingredient": {"id": 1, "name": "test ingredient 0"},
         }
         self.assertEqual(json.dumps(serialized), json.dumps(data))
+
+
+class TestRecipeSerializer(TestCase):
+    fixtures = ["users.json", "culinary.json"]
+
+    def test_serializer(self):
+        recipe = Recipe.objects.first()
+        serialized = RecipeSerializer(recipe).data
+        data = {
+            "title": "test recipe 0",
+            "thumbnail": None,
+            "favorites": [],
+            "portions": 6395,
+            "total_time": "15:52:05",
+            "instructions": "Good woman say man cup. Well drive particularly tend. Within behind perhaps specific. Where can nothing. Along nearly even special beat. Lead blue social. Marriage baby trade work.",
+            "ingredients": [
+                {
+                    "id": 1,
+                    "name": "test ingredient 0",
+                    "user": 1,
+                    "category": "Other",
+                    "calories": None,
+                    "proteins": None,
+                    "fats": None,
+                    "carbs": None,
+                },
+                {
+                    "id": 2,
+                    "name": "test ingredient 1",
+                    "user": 1,
+                    "category": "Other",
+                    "calories": None,
+                    "proteins": None,
+                    "fats": None,
+                    "carbs": None,
+                },
+                {
+                    "id": 3,
+                    "name": "test ingredient 2",
+                    "user": 1,
+                    "category": "Other",
+                    "calories": None,
+                    "proteins": None,
+                    "fats": None,
+                    "carbs": None,
+                },
+                {
+                    "id": 4,
+                    "name": "test ingredient 3",
+                    "user": 1,
+                    "category": "Other",
+                    "calories": None,
+                    "proteins": None,
+                    "fats": None,
+                    "carbs": None,
+                },
+                {
+                    "id": 5,
+                    "name": "test ingredient 4",
+                    "user": 1,
+                    "category": "Other",
+                    "calories": None,
+                    "proteins": None,
+                    "fats": None,
+                    "carbs": None,
+                },
+            ],
+        }
+        self.assertEqual(json.dumps(serialized), json.dumps(data))
+
+
+class TestIngredientUsageSerializer(TestCase):
+    fixtures = ["users.json", "culinary.json"]
+
+    def test_serializer(self):
+        usage = IngredientUsage.objects.first()
+        serialized = IngredientUsageSerializer(usage).data
+        data = {
+            "id": 1,
+            "amount": 57549662635585.4,
+            "ingredient": {
+                "id": 1,
+                "name": "test ingredient 0",
+                "user": 1,
+                "category": "Other",
+                "calories": None,
+                "proteins": None,
+                "fats": None,
+                "carbs": None,
+            },
+            "measure": {"id": 1, "name": "test measure 0"},
+        }
+        self.assertEqual(json.dumps(serialized), json.dumps(data))
