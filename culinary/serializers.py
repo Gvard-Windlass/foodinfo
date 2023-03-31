@@ -100,7 +100,7 @@ class IngredientUsageSerializer(serializers.ModelSerializer):
         fields = ["id", "amount", "ingredient", "measure"]
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class RecipeSerializer(DynamicFieldsModelSerializer):
     ingredients = IngredientSerializer(many=True)
     author = serializers.ReadOnlyField(source="author.username")
 

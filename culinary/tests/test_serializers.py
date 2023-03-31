@@ -90,9 +90,11 @@ class TestConversionSerializer(TestCase):
 class TestRecipeSerializer(TestCase):
     fixtures = ["users.json", "culinary.json"]
 
+    def setUp(self):
+        self.recipe = Recipe.objects.first()
+
     def test_serializer(self):
-        recipe = Recipe.objects.first()
-        serialized = RecipeSerializer(recipe).data
+        serialized = RecipeSerializer(self.recipe).data
         data = {
             "id": 1,
             "title": "test recipe 0",
@@ -153,8 +155,21 @@ class TestRecipeSerializer(TestCase):
                     "carbs": None,
                 },
             ],
+            "author": "user 0",
         }
         self.assertEqual(json.dumps(serialized), json.dumps(data))
+
+    def test_dynamic_fields(self):
+        serialized = RecipeSerializer(
+            self.recipe, fields=["id", "title", "thumbnail", "author"]
+        ).data
+        data = {
+            "id": 1,
+            "title": "test recipe 0",
+            "thumbnail": None,
+            "author": "user 0",
+        }
+        self.assertDictEqual(serialized, data)
 
 
 class TestIngredientUsageSerializer(TestCase):
