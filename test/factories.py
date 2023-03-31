@@ -9,6 +9,7 @@ from culinary.models import (
     Recipe,
     UtensilConversion,
 )
+from tags.models import Tag, TagCategory
 
 factory.random.reseed_random("foodinfo")
 
@@ -98,3 +99,18 @@ class IngredientUsageFactory(factory.django.DjangoModelFactory):
     ingredient = factory.SubFactory(IngredientFactory)
     measure = factory.SubFactory(MeasureFactory)
     recipe = factory.SubFactory(RecipeFactory)
+
+
+class TagCategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = TagCategory
+
+    name = factory.Sequence(lambda n: "test tag category %d" % n)
+
+
+class TagFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Tag
+
+    label = factory.Sequence(lambda n: "tag %d" % n)
+    category = factory.SubFactory(TagCategoryFactory)
