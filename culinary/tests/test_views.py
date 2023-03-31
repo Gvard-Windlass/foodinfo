@@ -1,7 +1,13 @@
 from typing_extensions import override
 from django.urls import reverse
 from rest_framework import status
-from test.factories import IngredientFactory, MeasureFactory
+from culinary.models import Ingredient
+from test.factories import (
+    FridgeFactory,
+    IngredientFactory,
+    MeasureFactory,
+    RecipeFactory,
+)
 from rest_framework.test import APITestCase
 from test.base_test import BaseTestMixins, TestUsers
 
@@ -249,3 +255,106 @@ class TestConversionViews(
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["id"], 1)
+
+
+class TestRecipeViews(APITestCase):
+    fixtures = ["users.json", "culinary.json"]
+
+    def test_get_list_by_guest(self):
+        url = reverse("recipes-list")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 3)
+
+    def test_filter_by_title(self):
+        RecipeFactory.create(title="title to search for")
+        url = reverse("recipes-list")
+        response = self.client.get(url + "?title=search")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_filter_by_ingredients(self):
+        url = reverse("recipes-list")
+        response = self.client.get(url + "?ingredients=1,2,3,4,5")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 1)
+
+    # TODO more tests
+    def test_filter_by_precise_ingredients(self):
+        url = reverse("recipes-list")
+        response = self.client.get(url + "?absentLimit=0&ingredients=1,2,3,4,5")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_filter_by_calories(self):
+        RecipeFactory.create(title="recipe 100 cal", calories=100)
+        RecipeFactory.create(title="recipe 105 cal", calories=105)
+
+        url = reverse("recipes-list")
+        response = self.client.get(url + "?caloriesAbove=100")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 2)
+
+        url = reverse("recipes-list")
+        response = self.client.get(url + "?caloriesBelow=105")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 2)
+
+    def test_filter_by_user(self):
+        # TODO - probubly filter by role
+        RecipeFactory.create(title="user recipe", author_id=2)
+        url = reverse("recipes-list")
+        response = self.client.get(url + "?userId=2")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_compact_list(self):
+        url = reverse("recipes-list")
+        response = self.client.get(url + "?expanded=false")
+
+        data = [
+            {"id": 1, "title": "test recipe 0", "thumbnail": None, "author": "user 0"},
+            {"id": 2, "title": "test recipe 1", "thumbnail": None, "author": "user 0"},
+            {"id": 3, "title": "test recipe 2", "thumbnail": None, "author": "user 0"},
+        ]
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertCountEqual(response.json(), data)
+        self.assertDictEqual(response.json()[0], data[0])
+
+    def test_filter_by_shelf(self):
+        credentials = TestUsers.get_user1_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        fridge = FridgeFactory.create(
+            name="shelf with recipe 1 ingredients",
+            user_id=2,
+            shelf=Ingredient.objects.all().order_by("id")[:5],
+        )
+        url = reverse("recipes-list")
+        response = self.client.get(url + f"?fridgeId={fridge.id}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 1)
+
+    def test_filter_by_precise_shelf(self):
+        credentials = TestUsers.get_user1_credentials()
+        self.assertTrue(self.client.login(**credentials))
+
+        fridge = FridgeFactory.create(
+            name="shelf with recipe 1 ingredients",
+            user_id=2,
+            shelf=Ingredient.objects.all().order_by("id")[:5],
+        )
+        url = reverse("recipes-list")
+        response = self.client.get(url + f"?absentLimit=0&fridgeId={fridge.id}")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 1)

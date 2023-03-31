@@ -49,4 +49,5 @@ urlpatterns = [
         conversion_views.ConversionEdit.as_view(),
         name="conversion-edit",
     ),
+    path("recipes/", recipe_views.RecipeList.as_view(), name="recipes-list"),
 ]
