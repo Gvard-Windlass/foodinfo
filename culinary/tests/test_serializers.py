@@ -94,6 +94,7 @@ class TestRecipeSerializer(TestCase):
         recipe = Recipe.objects.first()
         serialized = RecipeSerializer(recipe).data
         data = {
+            "id": 1,
             "title": "test recipe 0",
             "thumbnail": None,
             "favorites": [],
