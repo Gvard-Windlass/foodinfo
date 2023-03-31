@@ -84,6 +84,11 @@ class RecipeFactory(factory.django.DjangoModelFactory):
     instructions = factory.Faker("paragraph", nb_sentences=10)
     author_id = 1
 
+    calories = factory.Faker("pyfloat", min_value=1, max_value=350)
+    proteins = factory.Faker("pyfloat", min_value=1, max_value=350)
+    fats = factory.Faker("pyfloat", min_value=1, max_value=350)
+    carbs = factory.Faker("pyfloat", min_value=1, max_value=350)
+
 
 class IngredientUsageFactory(factory.django.DjangoModelFactory):
     class Meta:

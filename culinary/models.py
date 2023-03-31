@@ -4,7 +4,39 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
 
-class Ingredient(models.Model):
+class CaloryInfo(models.Model):
+    calories = models.FloatField(
+        null=True,
+        help_text="number of calories in kcal per 100 grams",
+        validators=[MinValueValidator(0.0)],
+    )
+    proteins = models.FloatField(
+        null=True,
+        help_text="amount of proteins in kcal per 100 grams",
+        validators=[MinValueValidator(0.0)],
+    )
+    fats = models.FloatField(
+        null=True,
+        help_text="amount of fats in kcal per 100 grams",
+        validators=[MinValueValidator(0.0)],
+    )
+    carbs = models.FloatField(
+        null=True,
+        help_text="amount of carbs in kcal per 100 grams",
+        validators=[MinValueValidator(0.0)],
+    )
+
+    class Meta:
+        constraints = [
+            CheckConstraint(check=Q(calories__gte=0.0), name="%(class)s calories >= 0"),
+            CheckConstraint(check=Q(proteins__gte=0.0), name="%(class)s proteins >= 0"),
+            CheckConstraint(check=Q(fats__gte=0.0), name="%(class)s fats >= 0"),
+            CheckConstraint(check=Q(carbs__gte=0.0), name="%(class)s carbs >= 0"),
+        ]
+        abstract = True
+
+
+class Ingredient(CaloryInfo):
     class IngredientCategory(models.TextChoices):
         Fruits = "Fruits"
         Vegetables = "Vegetables"
@@ -31,35 +63,6 @@ class Ingredient(models.Model):
         default=IngredientCategory.Other,
         max_length=50,
     )
-
-    calories = models.FloatField(
-        null=True,
-        help_text="number of calories in kcal per 100 grams",
-        validators=[MinValueValidator(0.0)],
-    )
-    proteins = models.FloatField(
-        null=True,
-        help_text="amount of proteins in kcal per 100 grams",
-        validators=[MinValueValidator(0.0)],
-    )
-    fats = models.FloatField(
-        null=True,
-        help_text="amount of fats in kcal per 100 grams",
-        validators=[MinValueValidator(0.0)],
-    )
-    carbs = models.FloatField(
-        null=True,
-        help_text="amount of carbs in kcal per 100 grams",
-        validators=[MinValueValidator(0.0)],
-    )
-
-    class Meta:
-        constraints = [
-            CheckConstraint(check=Q(calories__gte=0.0), name="calories >= 0"),
-            CheckConstraint(check=Q(proteins__gte=0.0), name="proteins >= 0"),
-            CheckConstraint(check=Q(fats__gte=0.0), name="fats >= 0"),
-            CheckConstraint(check=Q(carbs__gte=0.0), name="carbs >= 0"),
-        ]
 
     def __str__(self) -> str:
         return self.name
@@ -97,7 +100,7 @@ class UtensilConversion(models.Model):
         ]
 
 
-class Recipe(models.Model):
+class Recipe(CaloryInfo):
     title = models.CharField(max_length=150)
     thumbnail = models.ImageField(upload_to="", null=True, blank=True)
     favorites = models.ManyToManyField(User, related_name="favorites")
