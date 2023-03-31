@@ -6,6 +6,14 @@ from culinary.serializers import RecipeSerializer
 from culinary.models import Fridge, Recipe
 
 
+class RecipeDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = Recipe.objects.all().order_by("title")
+    serializer_class = RecipeSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
 class RecipeList(mixins.ListModelMixin, generics.GenericAPIView):
     serializer_class = RecipeSerializer
 

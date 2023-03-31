@@ -257,15 +257,19 @@ class TestConversionViews(
         self.assertEqual(response.json()["id"], 1)
 
 
-class TestRecipeViews(APITestCase):
+class TestRecipeViews(
+    BaseTestMixins.GuestPermittedGet,
+    BaseTestMixins.UserPermittedGet,
+    BaseTestMixins.StaffPermittedGet,
+    APITestCase,
+):
     fixtures = ["users.json", "culinary.json"]
 
-    def test_get_list_by_guest(self):
-        url = reverse("recipes-list")
-        response = self.client.get(url)
+    def setUp(self):
+        self.factory_count = 3
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.json()), 3)
+        self.single_path_name = "recipe-detail"
+        self.list_path_name = "recipes-list"
 
     def test_filter_by_title(self):
         RecipeFactory.create(title="title to search for")
