@@ -1,0 +1,143 @@
+[
+    {
+        "model": "tags.tagcategory",
+        "pk": 1,
+        "fields": {
+            "name": "test tag category 0"
+        }
+    },
+    {
+        "model": "tags.tagcategory",
+        "pk": 2,
+        "fields": {
+            "name": "test tag category 1"
+        }
+    },
+    {
+        "model": "tags.tagcategory",
+        "pk": 3,
+        "fields": {
+            "name": "test tag category 2"
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 1,
+        "fields": {
+            "label": "tag 0",
+            "category": 1
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 2,
+        "fields": {
+            "label": "tag 1",
+            "category": 1
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 3,
+        "fields": {
+            "label": "tag 2",
+            "category": 1
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 4,
+        "fields": {
+            "label": "tag 3",
+            "category": 1
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 5,
+        "fields": {
+            "label": "tag 4",
+            "category": 1
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 6,
+        "fields": {
+            "label": "tag 5",
+            "category": 2
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 7,
+        "fields": {
+            "label": "tag 6",
+            "category": 2
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 8,
+        "fields": {
+            "label": "tag 7",
+            "category": 2
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 9,
+        "fields": {
+            "label": "tag 8",
+            "category": 2
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 10,
+        "fields": {
+            "label": "tag 9",
+            "category": 2
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 11,
+        "fields": {
+            "label": "tag 10",
+            "category": 3
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 12,
+        "fields": {
+            "label": "tag 11",
+            "category": 3
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 13,
+        "fields": {
+            "label": "tag 12",
+            "category": 3
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 14,
+        "fields": {
+            "label": "tag 13",
+            "category": 3
+        }
+    },
+    {
+        "model": "tags.tag",
+        "pk": 15,
+        "fields": {
+            "label": "tag 14",
+            "category": 3
+        }
+    }
+]
