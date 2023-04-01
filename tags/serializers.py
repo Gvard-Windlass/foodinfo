@@ -7,7 +7,7 @@ from foodinfo.utils import DynamicFieldsModelSerializer
 
 class TagSerializer(DynamicFieldsModelSerializer):
     category_id = serializers.PrimaryKeyRelatedField(
-        queryset=TagCategory.objects.select_related("id")
+        queryset=TagCategory.objects.all().values_list("id", flat=True), required=False
     )
     category_name = serializers.ReadOnlyField(source="category.name")
 
