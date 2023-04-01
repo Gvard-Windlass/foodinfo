@@ -1,3 +1,4 @@
+from tags.serializers import TagSerializer
 from .models import (
     Ingredient,
     IngredientUsage,
@@ -83,6 +84,7 @@ class IngredientUsageSerializer(serializers.ModelSerializer):
 class RecipeSerializer(DynamicFieldsModelSerializer):
     ingredients = IngredientSerializer(many=True)
     author = serializers.ReadOnlyField(source="author.username")
+    tags = TagSerializer(many=True, fields=["id", "label", "category_name"])
 
     class Meta:
         model = Recipe
@@ -96,4 +98,5 @@ class RecipeSerializer(DynamicFieldsModelSerializer):
             "instructions",
             "ingredients",
             "author",
+            "tags",
         ]

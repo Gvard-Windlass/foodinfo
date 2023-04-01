@@ -324,9 +324,69 @@ class TestRecipeViews(
         response = self.client.get(url + "?expanded=false")
 
         data = [
-            {"id": 1, "title": "test recipe 0", "thumbnail": None, "author": "user 0"},
-            {"id": 2, "title": "test recipe 1", "thumbnail": None, "author": "user 0"},
-            {"id": 3, "title": "test recipe 2", "thumbnail": None, "author": "user 0"},
+            {
+                "id": 1,
+                "title": "test recipe 0",
+                "thumbnail": None,
+                "author": "user 0",
+                "tags": [
+                    {"id": 1, "label": "tag 0", "category_name": "test tag category 0"},
+                    {"id": 4, "label": "tag 3", "category_name": "test tag category 0"},
+                    {"id": 7, "label": "tag 6", "category_name": "test tag category 1"},
+                    {
+                        "id": 10,
+                        "label": "tag 9",
+                        "category_name": "test tag category 1",
+                    },
+                    {
+                        "id": 13,
+                        "label": "tag 12",
+                        "category_name": "test tag category 2",
+                    },
+                ],
+            },
+            {
+                "id": 2,
+                "title": "test recipe 1",
+                "thumbnail": None,
+                "author": "user 0",
+                "tags": [
+                    {"id": 2, "label": "tag 1", "category_name": "test tag category 0"},
+                    {"id": 5, "label": "tag 4", "category_name": "test tag category 0"},
+                    {"id": 8, "label": "tag 7", "category_name": "test tag category 1"},
+                    {
+                        "id": 11,
+                        "label": "tag 10",
+                        "category_name": "test tag category 2",
+                    },
+                    {
+                        "id": 14,
+                        "label": "tag 13",
+                        "category_name": "test tag category 2",
+                    },
+                ],
+            },
+            {
+                "id": 3,
+                "title": "test recipe 2",
+                "thumbnail": None,
+                "author": "user 0",
+                "tags": [
+                    {"id": 3, "label": "tag 2", "category_name": "test tag category 0"},
+                    {"id": 6, "label": "tag 5", "category_name": "test tag category 1"},
+                    {"id": 9, "label": "tag 8", "category_name": "test tag category 1"},
+                    {
+                        "id": 12,
+                        "label": "tag 11",
+                        "category_name": "test tag category 2",
+                    },
+                    {
+                        "id": 15,
+                        "label": "tag 14",
+                        "category_name": "test tag category 2",
+                    },
+                ],
+            },
         ]
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

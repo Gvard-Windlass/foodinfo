@@ -29,7 +29,7 @@ class RecipeList(mixins.ListModelMixin, generics.GenericAPIView):
         fields = None
         expanded = self.request.query_params.get("expanded")
         if expanded == "false":
-            fields = ["id", "title", "thumbnail", "author"]
+            fields = ["id", "title", "thumbnail", "author", "tags"]
 
         kwargs["context"] = self.get_serializer_context()
         kwargs["fields"] = fields

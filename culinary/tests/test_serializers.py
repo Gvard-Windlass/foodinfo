@@ -156,6 +156,13 @@ class TestRecipeSerializer(TestCase):
                 },
             ],
             "author": "user 0",
+            "tags": [
+                {"id": 1, "label": "tag 0", "category_name": "test tag category 0"},
+                {"id": 4, "label": "tag 3", "category_name": "test tag category 0"},
+                {"id": 7, "label": "tag 6", "category_name": "test tag category 1"},
+                {"id": 10, "label": "tag 9", "category_name": "test tag category 1"},
+                {"id": 13, "label": "tag 12", "category_name": "test tag category 2"},
+            ],
         }
         self.assertEqual(json.dumps(serialized), json.dumps(data))
 
