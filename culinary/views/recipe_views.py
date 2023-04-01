@@ -51,6 +51,7 @@ class RecipeList(mixins.ListModelMixin, generics.GenericAPIView):
         fridgeId = self.request.query_params.get("fridgeId")
         fridge_ingredients = None
         absent_limit = self.request.query_params.get("absentLimit")
+        tags = self.request.query_params.get("tags")
 
         if title:
             filters.append(Q(title__contains=title))
@@ -75,6 +76,8 @@ class RecipeList(mixins.ListModelMixin, generics.GenericAPIView):
                 filters.append(
                     Q(ingredientusage__ingredient__pk__in=fridge_ingredients)
                 )
+        if tags:
+            filters.append(Q(tags__pk__in=tags.split(",")))
 
         if absent_limit:
             if ingredients:

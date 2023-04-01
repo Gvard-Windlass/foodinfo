@@ -2,6 +2,7 @@ from typing_extensions import override
 from django.urls import reverse
 from rest_framework import status
 from culinary.models import Ingredient
+from tags.models import Tag
 from test.factories import (
     FridgeFactory,
     IngredientFactory,
@@ -422,3 +423,11 @@ class TestRecipeViews(
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
+
+    def test_filter_by_tags(self):
+        RecipeFactory.create(title="new title", tags=list(Tag.objects.all()[:5]))
+        url = reverse("recipes-list")
+        response = self.client.get(url + "?tags=1,2,4")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()), 3)
