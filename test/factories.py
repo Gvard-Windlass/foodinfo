@@ -90,6 +90,15 @@ class RecipeFactory(factory.django.DjangoModelFactory):
     fats = factory.Faker("pyfloat", min_value=1, max_value=350)
     carbs = factory.Faker("pyfloat", min_value=1, max_value=350)
 
+    @factory.post_generation
+    def tags(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for item in extracted:
+                self.tags.add(item)
+
 
 class IngredientUsageFactory(factory.django.DjangoModelFactory):
     class Meta:

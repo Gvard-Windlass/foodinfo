@@ -22,7 +22,7 @@ class TestIngredientViews(
     BaseTestMixins.StaffPermittedPostPutDelete,
     APITestCase,
 ):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         self.list_path_name = "ingredients-list"
@@ -71,7 +71,7 @@ class TestMeasureViews(
     BaseTestMixins.StaffPermittedPostPutDelete,
     APITestCase,
 ):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         MeasureFactory.create(name="free to delete")
@@ -108,7 +108,7 @@ class TestFridgeViews(
     BaseTestMixins.StaffPermittedPostPutDelete,
     APITestCase,
 ):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self) -> None:
         self.list_path_name = "shelfs-list"
@@ -190,7 +190,7 @@ class TestConversionViews(
     BaseTestMixins.StaffPermittedPostPutDelete,
     APITestCase,
 ):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         self.single_path_name = "conversion-detail"
@@ -263,7 +263,7 @@ class TestRecipeViews(
     BaseTestMixins.StaffPermittedGet,
     APITestCase,
 ):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         self.factory_count = 3

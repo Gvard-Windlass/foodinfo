@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from tags.models import Tag
 
 from test.factories import (
     IngredientFactory,
@@ -39,7 +40,17 @@ class Command(BaseCommand):
         for i in range(len(measures)):
             ConversionFactory.create(utensil=measures[i], ingredient=staff_ingrs[i])
 
-        recipes = RecipeFactory.create_batch(3)
+        recipes = [
+            RecipeFactory.create(
+                tags=list(Tag.objects.filter(pk__in=[1, 4, 7, 10, 13]))
+            ),
+            RecipeFactory.create(
+                tags=list(Tag.objects.filter(pk__in=[2, 5, 8, 11, 14]))
+            ),
+            RecipeFactory.create(
+                tags=list(Tag.objects.filter(pk__in=[3, 6, 9, 12, 15]))
+            ),
+        ]
         self._add_ingredients_to_recipe(staff_ingrs[:5], measures[0], recipes[0])
         self._add_ingredients_to_recipe(staff_ingrs[5:10], measures[1], recipes[1])
         self._add_ingredients_to_recipe(staff_ingrs[10:15], measures[2], recipes[2])

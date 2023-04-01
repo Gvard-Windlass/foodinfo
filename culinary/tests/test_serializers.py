@@ -7,7 +7,7 @@ from culinary.serializers import *
 
 
 class TestIngredientSerializer(TestCase):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         self.ingredient = Ingredient.objects.first()
@@ -33,7 +33,7 @@ class TestIngredientSerializer(TestCase):
 
 
 class TestMeasureSerializer(TestCase):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         self.measure = Measure.objects.first()
@@ -48,7 +48,7 @@ class TestMeasureSerializer(TestCase):
 
 
 class TestFridgeSerializer(TestCase):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         self.fridge = Fridge.objects.all()[2]
@@ -71,7 +71,7 @@ class TestFridgeSerializer(TestCase):
 
 
 class TestConversionSerializer(TestCase):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         self.conversion = UtensilConversion.objects.first()
@@ -88,7 +88,7 @@ class TestConversionSerializer(TestCase):
 
 
 class TestRecipeSerializer(TestCase):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def setUp(self):
         self.recipe = Recipe.objects.first()
@@ -173,7 +173,7 @@ class TestRecipeSerializer(TestCase):
 
 
 class TestIngredientUsageSerializer(TestCase):
-    fixtures = ["users.json", "culinary.json"]
+    fixtures = ["users.json", "tags.json", "culinary.json"]
 
     def test_serializer(self):
         usage = IngredientUsage.objects.first()
