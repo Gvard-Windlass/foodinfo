@@ -17,7 +17,9 @@ class TagSerializer(DynamicFieldsModelSerializer):
 
 
 class TagCategorySerializer(DynamicFieldsModelSerializer):
-    tags = TagSerializer(many=True, source="tag_set", fields=["id", "label"])
+    tags = TagSerializer(
+        many=True, source="tag_set", fields=["id", "label"], required=False
+    )
 
     class Meta:
         model = TagCategory
