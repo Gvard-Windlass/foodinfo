@@ -3,6 +3,8 @@ from django.db.models import CheckConstraint, UniqueConstraint, Q
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
+from tags.models import Tag
+
 
 class CaloryInfo(models.Model):
     calories = models.FloatField(
@@ -110,6 +112,8 @@ class Recipe(CaloryInfo):
 
     ingredients = models.ManyToManyField(Ingredient, through="culinary.IngredientUsage")
     author = models.ForeignKey(User, on_delete=models.PROTECT)
+
+    tags = models.ManyToManyField(Tag)
 
 
 class IngredientUsage(models.Model):
