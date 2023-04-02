@@ -54,12 +54,13 @@ class TestIngredientViews(
         self.assertEqual(len(response.json()), 1)
 
     def test_min_value_constraint(self):
-        credentials = TestUsers.get_staff_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_staff_token()
 
         url = reverse(self.post_path_name)
         data = {"name": "carrot", "calories": -100}
-        response = self.client.post(url, data=data, format="json")
+        response = self.client.post(
+            url, data=data, format="json", HTTP_AUTHORIZATION=token
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -127,11 +128,10 @@ class TestFridgeViews(
 
     @override
     def test_get_list_by_staff(self):
-        credentials = TestUsers.get_staff_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_staff_token()
 
         url = reverse(self.list_path_name)
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_AUTHORIZATION=token)
 
         self.assertEqual(len(response.json()), 3)
         self.assertEqual(len(response.json()[0]["shelf"]), 21)
@@ -141,20 +141,18 @@ class TestFridgeViews(
     def test_get_list_by_user(self):
         url = reverse(self.list_path_name)
 
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_user1_token()
 
-        user1_response = self.client.get(url)
+        user1_response = self.client.get(url, HTTP_AUTHORIZATION=token)
         user1_data = user1_response.json()
         user1_shelf = user1_data[0]["shelf"]
         self.assertEqual(user1_response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(user1_data), 1)
         self.assertEqual(len(user1_shelf), 5)
 
-        credentials = TestUsers.get_user2_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_user2_token()
 
-        user2_response = self.client.get(url)
+        user2_response = self.client.get(url, HTTP_AUTHORIZATION=token)
         user2_data = user2_response.json()
         user2_shelf = user2_data[0]["shelf"]
         self.assertEqual(user2_response.status_code, status.HTTP_200_OK)
@@ -165,20 +163,19 @@ class TestFridgeViews(
             self.assertCountEqual(user1_shelf, user2_shelf)
 
     def test_get_specific_by_user(self):
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_user1_token()
 
         url = reverse(self.single_path_name, args=[self.user1_object_id])
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["id"], self.user1_object_id)
 
         url = reverse(self.single_path_name, args=[self.staff_object_id])
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         url = reverse(self.single_path_name, args=[self.user2_object_id])
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
@@ -212,8 +209,7 @@ class TestConversionViews(
         }
 
     def test_unique_check(self):
-        credentials = TestUsers.get_staff_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_staff_token()
 
         url = reverse(self.post_path_name)
         data = {
@@ -221,7 +217,9 @@ class TestConversionViews(
             "utensil_id": 1,
             "ingredient_id": 1,
         }
-        response = self.client.post(url, data=data, format="json")
+        response = self.client.post(
+            url, data=data, format="json", HTTP_AUTHORIZATION=token
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override
@@ -239,21 +237,19 @@ class TestConversionViews(
 
     @override
     def test_get_specific_by_user(self):
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_user1_token()
 
         url = reverse(self.single_path_name, args=[1, 1])
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["id"], 1)
 
     @override
     def test_get_specific_by_staff(self):
-        credentials = TestUsers.get_staff_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_staff_token()
 
         url = reverse(self.single_path_name, args=[1, 1])
-        response = self.client.get(url)
+        response = self.client.get(url, HTTP_AUTHORIZATION=token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["id"], 1)
 
@@ -435,8 +431,7 @@ class TestRecipeViews(
         self.assertDictEqual(response.json()[0], data[0])
 
     def test_filter_by_shelf(self):
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_user1_token()
 
         fridge = FridgeFactory.create(
             name="shelf with recipe 1 ingredients",
@@ -444,14 +439,15 @@ class TestRecipeViews(
             shelf=Ingredient.objects.all().order_by("id")[:5],
         )
         url = reverse(self.list_path_name)
-        response = self.client.get(url + f"?fridgeId={fridge.id}")
+        response = self.client.get(
+            url + f"?fridgeId={fridge.id}", HTTP_AUTHORIZATION=token
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
 
     def test_filter_by_precise_shelf(self):
-        credentials = TestUsers.get_user1_credentials()
-        self.assertTrue(self.client.login(**credentials))
+        token = TestUsers.get_user1_token()
 
         fridge = FridgeFactory.create(
             name="shelf with recipe 1 ingredients",
@@ -459,7 +455,9 @@ class TestRecipeViews(
             shelf=Ingredient.objects.all().order_by("id")[:5],
         )
         url = reverse(self.list_path_name)
-        response = self.client.get(url + f"?absentLimit=0&fridgeId={fridge.id}")
+        response = self.client.get(
+            url + f"?absentLimit=0&fridgeId={fridge.id}", HTTP_AUTHORIZATION=token
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
