@@ -49,6 +49,9 @@ urlpatterns = [
         conversion_views.ConversionEdit.as_view(),
         name="conversion-edit",
     ),
-    path("recipes/", recipe_views.RecipeList.as_view(), name="recipes-list"),
+    path("recipes/", recipe_views.RecipeList.as_view(), name="recipe-list"),
     path("recipes/<int:pk>", recipe_views.RecipeDetail.as_view(), name="recipe-detail"),
+    path(
+        "recipes/edit/<int:pk>", recipe_views.RecipeEdit.as_view(), name="recipe-edit"
+    ),
 ]

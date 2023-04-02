@@ -1,9 +1,24 @@
 from django.db.models import Q, Count, F
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied, ParseError
-from rest_framework import mixins, generics
-from culinary.serializers import RecipeSerializer
+from rest_framework import mixins, generics, permissions
+from culinary.serializers import RecipeCreateSerializer, RecipeSerializer
 from culinary.models import Fridge, Recipe
+from culinary.permissions import IsOwnerOrStaff
+
+
+class RecipeEdit(
+    mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
+):
+    queryset = Recipe.objects.all().order_by("title")
+    serializer_class = RecipeSerializer
+    permission_classes = [IsOwnerOrStaff]
+
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class RecipeDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
@@ -14,26 +29,38 @@ class RecipeDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
         return self.retrieve(request, *args, **kwargs)
 
 
-class RecipeList(mixins.ListModelMixin, generics.GenericAPIView):
-    serializer_class = RecipeSerializer
+class RecipeList(
+    mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
+):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            serializer.save(author=self.request.user)
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return RecipeCreateSerializer
+        return RecipeSerializer
 
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
 
-        fields = None
-        expanded = self.request.query_params.get("expanded")
-        if expanded == "false":
-            fields = ["id", "title", "thumbnail", "author", "tags"]
+        if serializer_class == RecipeSerializer:
+            fields = None
+            expanded = self.request.query_params.get("expanded")
+            if expanded == "false":
+                fields = ["id", "title", "thumbnail", "author", "tags"]
+
+            kwargs["fields"] = fields
 
         kwargs["context"] = self.get_serializer_context()
-        kwargs["fields"] = fields
-
         return serializer_class(*args, **kwargs)
 
     def get_queryset(self):

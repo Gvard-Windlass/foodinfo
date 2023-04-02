@@ -260,8 +260,11 @@ class TestConversionViews(
 
 class TestRecipeViews(
     BaseTestMixins.GuestPermittedGet,
+    BaseTestMixins.GuestForbiddenPostPutDelete,
     BaseTestMixins.UserPermittedGet,
+    BaseTestMixins.OwnerPermittedPutDelete,
     BaseTestMixins.StaffPermittedGet,
+    BaseTestMixins.StaffPermittedPostPutDelete,
     APITestCase,
 ):
     fixtures = ["users.json", "tags.json", "culinary.json"]
@@ -270,18 +273,55 @@ class TestRecipeViews(
         self.factory_count = 3
 
         self.single_path_name = "recipe-detail"
-        self.list_path_name = "recipes-list"
+        self.list_path_name = "recipe-list"
+
+        self.post_path_name = "recipe-list"
+        self.default_post_data = {
+            "title": "new recipe",
+            "portions": 10,
+            "total_time": "1:30:00",
+            "instructions": "Recipe steps",
+            "ingredients": [
+                {
+                    "amount": 10,
+                    "ingredient": {"id": 1},
+                    "measure": {"id": 1},
+                },
+                {
+                    "amount": 100,
+                    "ingredient": {"name": "custom ingredient 1", "user_id": 1},
+                    "measure": {"id": 2},
+                },
+            ],
+            "author": 1,
+            "tags": [1, 5],
+        }
+
+        self.put_path_name = "recipe-edit"
+        self.default_put_data = {"id": 2, "title": "new_title"}
+
+        self.delete_path_name = "recipe-edit"
+
+    def test_update_by_user(self):
+        new_recipe = RecipeFactory.create(title="object to update", author_id=3)
+        self.user2_object_id = new_recipe.id
+        return super().test_update_by_user()
+
+    def test_delete_by_user(self):
+        new_recipe = RecipeFactory.create(title="object to update", author_id=3)
+        self.user2_object_id = new_recipe.id
+        return super().test_delete_by_user()
 
     def test_filter_by_title(self):
         RecipeFactory.create(title="title to search for")
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + "?title=search")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
 
     def test_filter_by_ingredients(self):
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + "?ingredients=1,2,3,4,5")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -289,7 +329,7 @@ class TestRecipeViews(
 
     # TODO more tests
     def test_filter_by_precise_ingredients(self):
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + "?absentLimit=0&ingredients=1,2,3,4,5")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -299,13 +339,13 @@ class TestRecipeViews(
         RecipeFactory.create(title="recipe 100 cal", calories=100)
         RecipeFactory.create(title="recipe 105 cal", calories=105)
 
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + "?caloriesAbove=100")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 2)
 
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + "?caloriesBelow=105")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -314,14 +354,14 @@ class TestRecipeViews(
     def test_filter_by_user(self):
         # TODO - probubly filter by role
         RecipeFactory.create(title="user recipe", author_id=2)
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + "?userId=2")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 1)
 
     def test_compact_list(self):
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + "?expanded=false")
 
         data = [
@@ -403,7 +443,7 @@ class TestRecipeViews(
             user_id=2,
             shelf=Ingredient.objects.all().order_by("id")[:5],
         )
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + f"?fridgeId={fridge.id}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -418,7 +458,7 @@ class TestRecipeViews(
             user_id=2,
             shelf=Ingredient.objects.all().order_by("id")[:5],
         )
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + f"?absentLimit=0&fridgeId={fridge.id}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -426,7 +466,7 @@ class TestRecipeViews(
 
     def test_filter_by_tags(self):
         RecipeFactory.create(title="new title", tags=list(Tag.objects.all()[:5]))
-        url = reverse("recipes-list")
+        url = reverse(self.list_path_name)
         response = self.client.get(url + "?tags=1,2,4")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
