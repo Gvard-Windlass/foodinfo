@@ -9,6 +9,7 @@ from .models import (
     UtensilConversion,
 )
 from rest_framework import serializers
+from rest_framework.exceptions import ParseError
 from foodinfo.utils import DynamicFieldsModelSerializer
 
 
@@ -92,6 +93,12 @@ class RecipeSerializer(DynamicFieldsModelSerializer):
         request = self.context.get("request") or None
         if request and request.user.is_authenticated:
             return obj.favorites.filter(pk=request.user.pk).exists()
+
+    def update(self, instance, validated_data):
+        # if incorrect fields passed when partial update
+        if not validated_data.keys():
+            raise ParseError()
+        return super().update(instance, validated_data)
 
     class Meta:
         model = Recipe
