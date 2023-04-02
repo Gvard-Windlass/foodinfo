@@ -53,4 +53,6 @@ class TestRecipeModel(TestCase):
 
         self.assertIsInstance(recipe, Recipe)
         self.assertIsInstance(ingredients[0], IngredientUsage)
-        self.assertEqual(len(recipe.ingredients.all()), 3)
+
+        usage = IngredientUsage.objects.filter(recipe=recipe)
+        self.assertEqual(len(usage), 3)

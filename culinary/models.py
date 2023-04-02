@@ -110,9 +110,7 @@ class Recipe(CaloryInfo):
     total_time = models.TimeField()
     instructions = models.TextField()
 
-    ingredients = models.ManyToManyField(Ingredient, through="culinary.IngredientUsage")
     author = models.ForeignKey(User, on_delete=models.PROTECT)
-
     tags = models.ManyToManyField(Tag)
 
 

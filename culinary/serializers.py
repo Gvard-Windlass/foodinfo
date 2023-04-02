@@ -82,9 +82,15 @@ class IngredientUsageSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(DynamicFieldsModelSerializer):
-    ingredients = IngredientSerializer(many=True)
+    ingredients = IngredientUsageSerializer(many=True, source="ingredientusage_set")
     author = serializers.ReadOnlyField(source="author.username")
     tags = TagSerializer(many=True, fields=["id", "label", "category_name"])
+    favorite = serializers.SerializerMethodField()
+
+    def get_favorite(self, obj):
+        request = self.context.get("request") or None
+        if request and request.user.is_authenticated:
+            return obj.favorites.filter(pk=request.user.pk).exists()
 
     class Meta:
         model = Recipe
@@ -92,11 +98,15 @@ class RecipeSerializer(DynamicFieldsModelSerializer):
             "id",
             "title",
             "thumbnail",
-            "favorites",
+            "favorite",
             "portions",
             "total_time",
             "instructions",
             "ingredients",
             "author",
             "tags",
+            "calories",
+            "proteins",
+            "fats",
+            "carbs",
         ]
