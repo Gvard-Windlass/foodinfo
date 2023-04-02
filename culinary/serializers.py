@@ -1,3 +1,4 @@
+from tags.models import Tag
 from tags.serializers import TagSerializer
 from .models import (
     Ingredient,
@@ -99,6 +100,64 @@ class RecipeSerializer(DynamicFieldsModelSerializer):
             "title",
             "thumbnail",
             "favorite",
+            "portions",
+            "total_time",
+            "instructions",
+            "ingredients",
+            "author",
+            "tags",
+            "calories",
+            "proteins",
+            "fats",
+            "carbs",
+        ]
+
+
+class RecipeCreateSerializer(serializers.ModelSerializer):
+    ingredients = serializers.ListField(write_only=True)
+    tags = serializers.ListField(write_only=True)
+
+    def create(self, validated_data):
+        ingredients_usage_data = validated_data.pop("ingredients")
+        tag_ids = validated_data.pop("tags")
+
+        recipe = Recipe.objects.create(**validated_data)
+
+        for usage in ingredients_usage_data:
+            ingredient_data = usage["ingredient"]
+            measure_data = usage["measure"]
+
+            ingr_id = ingredient_data.get("id") or None
+            mes_id = measure_data.get("id") or None
+
+            if ingr_id:
+                ingredient = Ingredient.objects.get(id=ingr_id)
+            else:
+                ingredient = Ingredient.objects.create(**ingredient_data)
+
+            if mes_id:
+                measure = Measure.objects.get(id=mes_id)
+            else:
+                measure = Measure.objects.create(**measure_data)
+
+            usage = IngredientUsage.objects.create(
+                amount=usage["amount"],
+                ingredient=ingredient,
+                measure=measure,
+                recipe=recipe,
+            )
+
+        for id in tag_ids:
+            tag = Tag.objects.get(id=id)
+            recipe.tags.add(tag)
+
+        return recipe
+
+    class Meta:
+        model = Recipe
+        fields = [
+            "title",
+            "thumbnail",
             "portions",
             "total_time",
             "instructions",

@@ -208,6 +208,93 @@ class TestRecipeSerializer(TestCase):
         self.assertDictEqual(serialized, data)
 
 
+class TestRecipeCreateSerializer(TestCase):
+    fixtures = ["users.json", "tags.json", "culinary.json"]
+
+    def setUp(self):
+        return super().setUp()
+
+    def test_serializer(self):
+        data = {
+            "title": "new recipe",
+            "portions": 10,
+            "total_time": "1:30:00",
+            "instructions": "Recipe steps",
+            "ingredients": [
+                {
+                    "amount": 10,
+                    "ingredient": {"id": 1},
+                    "measure": {"id": 1},
+                },
+                {
+                    "amount": 100,
+                    "ingredient": {"name": "custom ingredient 1", "user_id": 1},
+                    "measure": {"id": 2},
+                },
+            ],
+            "author": 1,
+            "tags": [1, 5],
+        }
+        creation_serializer = RecipeCreateSerializer(data=data)
+        self.assertTrue(creation_serializer.is_valid())
+
+        recipe = creation_serializer.save()
+        recipe.refresh_from_db()
+        serialized = RecipeSerializer(recipe).data
+
+        db_data = {
+            "id": 4,
+            "title": "new recipe",
+            "thumbnail": None,
+            "favorite": None,
+            "portions": 10,
+            "total_time": "01:30:00",
+            "instructions": "Recipe steps",
+            "ingredients": [
+                {
+                    "id": 16,
+                    "amount": 10.0,
+                    "ingredient": {
+                        "id": 1,
+                        "name": "test ingredient 0",
+                        "user": 1,
+                        "category": "Other",
+                        "calories": None,
+                        "proteins": None,
+                        "fats": None,
+                        "carbs": None,
+                    },
+                    "measure": {"id": 1, "name": "test measure 0"},
+                },
+                {
+                    "id": 17,
+                    "amount": 100.0,
+                    "ingredient": {
+                        "id": 32,
+                        "name": "custom ingredient 1",
+                        "user": 1,
+                        "category": "Other",
+                        "calories": None,
+                        "proteins": None,
+                        "fats": None,
+                        "carbs": None,
+                    },
+                    "measure": {"id": 2, "name": "test measure 1"},
+                },
+            ],
+            "author": "user 0",
+            "tags": [
+                {"id": 1, "label": "tag 0", "category_name": "test tag category 0"},
+                {"id": 5, "label": "tag 4", "category_name": "test tag category 0"},
+            ],
+            "calories": None,
+            "proteins": None,
+            "fats": None,
+            "carbs": None,
+        }
+        self.assertEqual(json.dumps(serialized), json.dumps(db_data))
+
+
 class TestIngredientUsageSerializer(TestCase):
     fixtures = ["users.json", "tags.json", "culinary.json"]
 
