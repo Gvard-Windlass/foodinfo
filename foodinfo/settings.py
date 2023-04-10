@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "culinary",
     "tags",
+    "account",
 ]
 
 REST_FRAMEWORK = {
