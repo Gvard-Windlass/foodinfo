@@ -1,6 +1,7 @@
 import factory
 import factory.random
 from django.contrib.auth.models import User
+from allauth.account.models import EmailAddress
 from culinary.models import (
     Ingredient,
     IngredientUsage,
@@ -27,6 +28,17 @@ class UserFactory(factory.django.DjangoModelFactory):
     def _create(cls, model_class, *args, **kwargs):
         manager = cls._get_manager(model_class)
         return manager.create_user(*args, **kwargs)
+
+
+class EmailFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = EmailAddress
+        django_get_or_create = ("email",)
+
+    user_id = 1
+    email = UserFactory.email
+    verified = True
+    primary = True
 
 
 class IngredientFactory(factory.django.DjangoModelFactory):
