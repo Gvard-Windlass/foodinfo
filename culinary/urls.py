@@ -27,7 +27,7 @@ urlpatterns = [
         ingredient_views.IngredientEdit.as_view(),
         name="ingredients-edit",
     ),
-    path("fridge/", fridge_views.FridgeList.as_view(), name="shelfs-list"),
+    path("fridge/all", fridge_views.FridgeList.as_view(), name="shelfs-list"),
     path("fridge/<int:pk>", fridge_views.FridgeDetail.as_view(), name="shelfs-detail"),
     path(
         "fridge/edit/<int:pk>",
@@ -35,7 +35,7 @@ urlpatterns = [
         name="shelfs-edit",
     ),
     path(
-        "conversion/",
+        "conversion/all",
         conversion_views.ConversionList.as_view(),
         name="conversion-list",
     ),

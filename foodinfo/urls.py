@@ -21,12 +21,12 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("culinary.urls")),
     path("api/", include("tags.urls")),
-    path("dj-rest-auth/", include("dj_rest_auth.urls")),
-    path("dj-rest-auth/registration/", include("dj_rest_auth.registration.urls")),
+    path("api/auth/", include("dj_rest_auth.urls")),
+    path("api/registration/", include("dj_rest_auth.registration.urls")),
     # seem to work fine without importing view despite what the docs say
     # https://dj-rest-auth.readthedocs.io/en/latest/api_endpoints.html#registration
     path(
-        "dj-rest-auth/account-confirm-email/",
+        "api/confirm-email/",
         VerifyEmailView.as_view(),
         name="account_email_verification_sent",
     ),
