@@ -75,6 +75,9 @@ class Fridge(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     shelf = models.ManyToManyField(Ingredient)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Measure(models.Model):
     name = models.CharField(max_length=25)
@@ -112,6 +115,9 @@ class Recipe(CaloryInfo):
 
     author = models.ForeignKey(User, on_delete=models.PROTECT)
     tags = models.ManyToManyField(Tag)
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class IngredientUsage(models.Model):
