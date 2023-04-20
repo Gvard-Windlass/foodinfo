@@ -52,7 +52,11 @@ class DeleteVars:
 
 class BaseTestMixins:
     class GuestForbiddenGet(GetVars, APITestCase):
-        """Test that anonymous users can't get object or list of objects"""
+        """Test that anonymous users can't get object or list of objects
+
+        GET - 401
+
+        """
 
         def test_get_list_by_guest(self):
             url = reverse(self.list_path_name)
@@ -91,7 +95,7 @@ class BaseTestMixins:
     class UserPermittedGet(GetVars, APITestCase):
         """Test that non-staff users can get object or list of objects.
 
-        GET - 200, 404"""
+        GET - 200"""
 
         factory_count: int
 
@@ -114,7 +118,7 @@ class BaseTestMixins:
     class StaffPermittedGet(GetVars, APITestCase):
         """Test that staff users can get object or list of objects.
 
-        GET - 200, 404"""
+        GET - 200"""
 
         factory_count: int
 
@@ -213,7 +217,11 @@ class BaseTestMixins:
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     class UserForbiddenPostPutDelete(PostVars, PutVars, DeleteVars, APITestCase):
-        """Test that regular users can't create, update, delete objects"""
+        """Test that regular users can't create, update, delete objects
+
+        POST, PUT, DELETE - 403
+
+        """
 
         def test_post_by_user(self):
             token = TestUsers.get_user1_token()
@@ -244,7 +252,11 @@ class BaseTestMixins:
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     class GuestForbiddenPostPutDelete(PostVars, PutVars, DeleteVars, APITestCase):
-        """Test that anonymous users can't create, update, delete any objects"""
+        """Test that anonymous users can't create, update, delete any objects
+
+        POST, PUT, DELETE - 401
+
+        """
 
         def test_post_by_guest(self):
             url = reverse(self.post_path_name)
@@ -262,7 +274,11 @@ class BaseTestMixins:
             self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     class UserPermittedPost(PostVars, APITestCase):
-        """Test that authenticated non-staff users can create objects"""
+        """Test that authenticated non-staff users can create objects
+
+        POST - 201
+
+        """
 
         def test_post_by_user(self):
             token = TestUsers.get_user1_token()
@@ -277,7 +293,13 @@ class BaseTestMixins:
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     class OwnerPermittedPutDelete(PutVars, DeleteVars, APITestCase):
-        """Test that among non-staff users only those who created objects can update and delete them"""
+        """Test that among non-staff users only those who created objects can update and delete them
+
+        PUT - 200, 403
+
+        DELETE - 204, 403
+
+        """
 
         user2_object_id: int
 
@@ -310,7 +332,11 @@ class BaseTestMixins:
             self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     class GuestLimitedGet(GetVars, GetCompareVars, APITestCase):
-        """Test that anonymous user can get only objects created by staff"""
+        """Test that anonymous user can get only objects created by staff
+
+        POST - 200, 401
+
+        """
 
         def test_get_list_by_guest(self):
             url = reverse(self.list_path_name)
@@ -330,7 +356,11 @@ class BaseTestMixins:
             self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     class StaffUnlimitedGet(GetVars, GetCompareVars, APITestCase):
-        """Test that staff users can get any objects regardless of who created them"""
+        """Test that staff users can get any objects regardless of who created them
+
+        GET - 200
+
+        """
 
         def test_get_list_by_staff(self):
             token = TestUsers.get_staff_token()
@@ -353,7 +383,11 @@ class BaseTestMixins:
             self.assertEqual(response.json()["id"], self.user1_object_id)
 
     class UserLimitedGet(GetVars, GetCompareVars, APITestCase):
-        """Test that non-staff users can only get objects created by themselves or staff"""
+        """Test that non-staff users can only get objects created by themselves or staff
+
+        GET - 200, 403
+
+        """
 
         def test_get_list_by_user(self):
             url = reverse(self.list_path_name)
